@@ -105,6 +105,28 @@ colormachine.data = {
    lrfurn_armchair_front_    = { nr=14, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="armchair",block="lrfurn:armchair_white", add="armchair_" },
    lrfurn_sofa_right_front_  = { nr=15, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="sofa",    block="lrfurn:longsofa_white", add="sofa_" },
    lrfurn_longsofa_middle_front_= { nr=16, modname='lrfurn',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="longsofa",block="lrfurn:sofa_white", add="longsofa_" },
+
+   -- grey variants do not seem to exist, even though the textures arethere (perhaps nobody wants a grey flag!)
+   flags_                    = { nr=17, modname='flags',         shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="flags",   block="flags:white", add="" },
+
+   blox_stone_               = { nr=18, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SnBlox",  block="default:stone", add="stone" },
+   blox_quarter_             = { nr=19, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="S4Blox",  block="default:stone", add="quarter" },
+   blox_checker_             = { nr=20, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="S8Blox",  block="default:stone", add="checker" },
+   blox_diamond_             = { nr=21, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SDBlox",  block="default:stone", add="diamond"},
+   blox_cross_               = { nr=22, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SXBlox",  block="default:stone", add="cross" },
+   blox_square_              = { nr=23, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SQBlox",  block="default:stone", add="square" },
+   blox_loop_                = { nr=24, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SLBlox",  block="default:stone", add="loop" },
+   blox_corner_              = { nr=25, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="SCBlox",  block="default:stone", add="corner" },
+
+   blox_wood_                = { nr=26, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WnBlox",  block="default:wood", add="wood" },
+   blox_quarter_wood_        = { nr=27, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="W4Blox",  block="default:wood", add="quarter_wood" },
+   blox_checker_wood_        = { nr=28, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="W8Blox",  block="default:wood", add="checker_wood"},
+   blox_diamond_wood_        = { nr=29, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WDBlox",  block="default:wood", add="diamond_wood"},
+
+   blox_cobble_              = { nr=30, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CnBlox",  block="default:cobble", add="cobble" },
+
+   homedecor_window_shutter_ = { nr=31, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec", block="homedecor:shutter_oak", add="shutter_"},
+
 }
 
 
@@ -116,7 +138,7 @@ colormachine.generate_form = function( m_prefix )
 
    local form = "size["..tostring( #colormachine.colors+2 )..",10]".."label[5,0;Select a color:]"..
          "label[5,8.2;Select a color or]"..
-         "button[7,8.2;2,1;abort;abort selection]".. -- TODO: return the previous color here
+         "button[7,8.2;2,1;abort;abort selection]"..
          "label[0.3,1;light]";
 
    -- not all mods offer all shades (and some offer even more)
@@ -172,7 +194,9 @@ colormachine.generate_form = function( m_prefix )
    for i,gname in ipairs( colormachine.grey_names ) do
       if( colormachine.data[ m_prefix ].grey_shades[ i ]==1 ) then
          local translated_color = colormachine.translate_color_name( nil, m_prefix, gname, -1, -1, i, 0 );
-         form = form.."image_button["..tostring( #colormachine.colors+1 )..","..tostring( i+1 )..";1,1;"..translated_color..";"..gname.."; ]";
+         if( translated_color ~= nil ) then
+            form = form.."image_button["..tostring( #colormachine.colors+1 )..","..tostring( i+1 )..";1,1;"..translated_color..";"..gname.."; ]";
+         end
       end
    end
    return form;
@@ -276,6 +300,31 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       return nil;
    end
 
+   -- blox has its own naming scheme - but at least the colors supported are of a simple kind (no shades, no lower saturation)
+   if( colormachine.data[k].modname == 'blox' ) then
+
+      local color_used = "";
+      if( s==1 and c==1 ) then
+         color_used = 'pink'; -- in blox, this is called "pink"; normally "light_red"
+      elseif( g>-1 ) then 
+         color_used = colormachine.grey_names[ g ];
+      elseif( s ~= 3 ) then
+         return nil; -- only normal saturation supported
+      elseif( c==10 ) then
+         color_used = 'purple'; -- purple and violet are not the same, but what shall we do?
+      elseif( c==4 or c==6 or c==8 or c>10 ) then
+         return nil; -- these colors are not supported
+      elseif( c > 0 ) then
+         color_used = colormachine.colors[ c ];
+      end
+
+      if( as_obj_name == 1 ) then
+         return 'blox:'..( color_used )..( colormachine.data[k].add );
+      else
+         return 'blox_'..( color_used )..( colormachine.data[k].add )..'.png';
+      end
+   end
+ 
 
    local postfix = '.png';
    -- we want the object name, i.e. default:brick, and not default_brick.png (all with colors inserted...):
@@ -318,10 +367,32 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       end
    end
 
+   -- homedecors names are slightly different....
+   if( k == 'homedecor_window_shutter_' ) then
+
+      if( s==1 and new_color=='light_blue' ) then -- only light blue is supported
+         return k_new..'light_blue'..postfix;
+ 
+      elseif( new_color=='dark_green' ) then
+         return k_new..'forest_green'..postfix;
+
+      -- no more light colors, no more cyan or mangenta available; no normal green or blue
+      elseif( s==1 or c==7 or c==11 or c==5 or c==9 ) then
+         return nil;
+
+      elseif( new_color=='dark_orange' ) then
+         return k_new..'mahogany'..postfix;
+
+      elseif( new_color=='orange' ) then
+         return k_new..'oak'..postfix;
+ 
+      end
+   end
+
 
    -- normal dyes (also used for wool) use a diffrent naming scheme
    if( colormachine.data[k].u == 0 ) then
-      if(     new_color == 'darkgrey'    ) then
+      if(     new_color == 'darkgrey' ) then
          return k_new..'dark_grey'..postfix;  
       elseif( new_color == 'dark_orange' ) then
          return k_new..'brown'..postfix;
@@ -345,171 +416,91 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
 end
 
 
--- if the player has selected a color, show all blocks in that color
-colormachine.blocktype_menu = function( meta, new_color )
+-- if a block is inserted, the name of its color is very intresting (for removing color or for setting that color)
+-- (kind of the inverse of translate_color_name)
+colormachine.get_color_from_blockname = function( mod_name, block_name )
 
-   new_color = colormachine.decode_color_name( meta, new_color );
+   local bname = mod_name..":"..block_name;
 
-   -- keep the same size as with the color selector
-   local form = "size["..tostring( #colormachine.colors+2 )..",10]".."label[5,0;Select a blocktype:]"..
-                "label[0.2,2.2;name]"..
-                "label[0.2,3.2;unpainted]"..
-                "label[0.2,4.2;colored]"..
-                "button[1,1;4,1;dye_management;Manage stored dyes]"..
-                "button[5,1;4,1;main_menu;Back to main menu]";
-   local x = 1;
-   local y = 3;
-
-   for i,k in ipairs( colormachine.ordered ) do
-
-      -- only installed mods are of intrest
-      if( k ~= nil and colormachine.data[ k ].installed == 1 ) then
-
-         -- that particular mod may not offer this color
-         form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..colormachine.data[k].descr.."]"..
-                  "item_image["..tostring(x)..","..tostring(y    )..";1,1;"..colormachine.data[k].block.."]"; 
-
-         local translated_color = colormachine.translate_color_name( meta, k, new_color, nil, nil, nil, 1 );
-         if( translated_color ~= nil ) then
-            form = form..  "item_image["..tostring(x)..","..tostring(y+1)..";1,1;"..translated_color.."]"; 
-         else
-            form = form.."button["..      tostring(x)..","..tostring(y+1)..";1,1;"..k..";n/a]";
-         end
-
-         x = x+1;
-         if( x>13 ) then
-            x = 1;
-            y = y+3;
-            form = form..
-                "label[0.2,5.2;name]"..
-                "label[0.2,6.2;unpainted]"..
-                "label[0.2,7.2;colored]";
-         end
-      end
-   end
-   return form;
-end
-
-
-
--- this function tries to figure out which block type was inserted and how the color can be decoded
-colormachine.main_menu_formspec = function( pos, option )
-
-   local i = 0;
-   local k = 0;
-   local v = 0;
-
-   local form = "size[10,9]"..
-                "list[current_player;main;1,5;8,4;]"..
-                "label[3,0.2;Spray booth main menu]"..
-                "button[1,1;4,1;dye_management;Manage stored dyes]"..
-                "button[5,1;4,1;blocktype_menu;Select blocktype]"..
-
-                "label[1,2;input:]"..
-                "list[current_name;input;1,2.5;1,1;]";
-
-   local meta = minetest.env:get_meta(pos);
-   local inv  = meta:get_inventory();
-
-   -- display the name of the color the machine is set to
-   form = form.."label[2.2,4.3;Current painging color:]"..
-                "label[5.0,4.3;"..(meta:get_string('selected_name') or "?" ).."]"..
-   -- display the owner name
-                "label[6,0.2;(owner: "..(meta:get_string('owner') or "?" ).."]";
-
-   if( inv:is_empty( "input" )) then
-      form = form.."label[2.2,2.5;Insert block to be analyzed.]";
-      return form;
-   end
-
-   local stack = inv:get_stack( "input", 1);
-   local bname = stack:get_name();
-   -- lets find out if this block is one of the unpainted basic blocks calling for paint
    local found = {};
    for k,v in pairs( colormachine.data ) do
-      if( bname == v.block ) then
+      if( mod_name == v.modname ) then
          table.insert( found, k );
       end
    end 
-
-   -- make sure all output fields are empty
-   for i = 1, inv:get_size( "output" ) do
-      inv:set_stack( "output", i, "" );
-   end
-
-   local anz_blocks = stack:get_count();
-
-   -- a block that can be colored
-   if( #found > 0 ) then
-    
-      local anz_found  = 0;
-      for i,v in ipairs( found ) do
-         if( i <= inv:get_size( "output" )) then
-            local translated_color = colormachine.translate_color_name( meta, v, meta:get_string('selected_name'), nil, nil, nil, 1 );
-            --print( 'BLOCK type to use: '..tostring(v).."  translated_color: "..tostring(translated_color)..".");
-            if( translated_color ~= nil ) then
-               anz_found = anz_found + 1;
-               inv:set_stack( "output", anz_found, translated_color.." "..tostring( anz_blocks ));
-            end
-         end
-      end
-      
-      -- this color was not supported
-      if( anz_found == 0 ) then
-         form = form.."label[2.2,2.5;Sorry, this block is not available in that color.]";
-         return form;
-      end
-      
-      form = form.."label[3,2;Available variants:]"..
-                   "list[current_name;output;3,2.5;"..tostring( anz_found )..",1;]";
-      return form;
-   end
-
-
-   -- get the modname
-   local parts = string.split(bname,":");
-   if( #parts < 2 ) then
-      form = form.."label[2.2,2.5;ERROR! Failed to analyze the name of this node: "..tostring(bname).."]";
-      return form;
-   end
-      
-   -- it is possible that we are dealing with an already painted block
-   local found = {};
-   for k,v in pairs( colormachine.data ) do
-      if( parts[1] == v.modname ) then
-         table.insert( found, k );
-      end
-   end 
-
-   -- it may be a dye source
-   for i,v in ipairs( colormachine.basic_dye_sources ) do
-      -- we have found the right color!
-      if( bname == v ) then
-         form = form.."label[2.2,2.5;This is a dye source.]";
-         return form;
-      end
-   end
-
 
    if( #found < 1 ) then
-      form = form.."label[2.2,2.5;Sorry, this block is not supported by the spray booth.]";
-      return form;
+      return { error_code ="Sorry, this block is not supported by the spray booth.",
+               found_name = "",
+               blocktype  = ""};
    end
      
    -- another case of special treatment needed; at least the color is given in the tiles 
-   if( parts[1]=='stained_glass' ) then 
+   if( mod_name =='stained_glass' ) then 
 
       local original_node = minetest.registered_nodes[ bname ];
       if( original_node ~= nil ) then
          local tile   = original_node.tiles[1];
          local liste2 = string.split( tile, "%.");
-         parts[2] = liste2[1];
+         block_name = liste2[1];
+      end
+   end
+
+
+   -- blox uses its own naming scheme
+   if( mod_name =='blox' ) then
+      -- the color can be found in the description
+      local original_node = minetest.registered_nodes[ bname ];
+      if( original_node ~= nil ) then
+
+         local bloxdescr = original_node.description;
+         -- bloxparts[1] will be filled with the name of the color:
+         local bloxparts = string.split( bloxdescr, " ");
+         -- now extract the blocktype information         
+         if( bloxparts ~= nil and #bloxparts > 0 ) then
+
+            -- we split with the color name
+            local found_name      = bloxparts[1];
+            local blocktype       = 'blox_'..string.sub( block_name, string.len( found_name )+1 )..'_';
+               
+            -- handle pink and purple
+            if(     found_name == 'pink' ) then
+               found_name = 'light_red';
+            elseif( found_name == 'purple' ) then
+               found_name = 'violet';
+            end
+
+            return { error_code = nil,
+                     found_name = found_name, -- the name of the color
+                     blocktype  = blocktype }; -- the blocktype
+         end
+      end
+      -- if this point is reached, the decoding of the blox-block-name has failed
+      return { error_code = "Error: Failed to decode color of this blox-block.",
+               found_name = "",
+               blocktype  = "" }; 
+
+   end
+
+   -- homedecors names are slightly different....
+   if( mod_name == 'homedecor' ) then
+
+      -- change the blockname to the expected color
+      if(     block_name == 'shutter_forest_green' ) then
+         block_name = 'shutter_dark_green';
+
+      elseif( block_name == 'shutter_mahogany' ) then
+         block_name = 'shutter_dark_orange';
+ 
+      -- this is the default, unpainted one..which can also be considered as "orange" in the menu
+--      elseif( blockname == 'shutter_oak' ) then 
+--         block_name = 'shutter_orange';
       end
    end
 
 
    -- try to analyze the name of this color; this works only if the block follows the color scheme
-   local liste = string.split( parts[2], "_" );
+   local liste = string.split( block_name, "_" );
    local curr_index = #liste;
 
    -- handle some special wool- and dye color names
@@ -566,12 +557,14 @@ colormachine.main_menu_formspec = function( pos, option )
    if( curr_index > 0 and g==-1 and c~=0) then
       if(     liste[ curr_index ] == 'light' ) then
         s = 1;
+        curr_index = curr_index - 1;
       elseif( liste[ curr_index ] == 'medium' ) then
         s = 5;
+        curr_index = curr_index - 1;
       elseif( liste[ curr_index ] == 'dark'   ) then
         s = 7;
+        curr_index = curr_index - 1;
       end
-      curr_index = curr_index - 1;
    end
 
    local found_name = "";
@@ -586,20 +579,21 @@ colormachine.main_menu_formspec = function( pos, option )
          found_name = found_name.."_s50";
       end
    end
-
    -- for blocks that do not follow the naming scheme - the color cannot be decoded
    if( g==-1 and c==0 ) then
-      form = form.."label[2.2,2.5;This is a colored block: "..tostring( bname )..".]"; 
-      return form;
+      return { error_code ="This is a colored block: "..tostring( bname )..".", 
+               found_name = "",
+               blocktype  = ""};
    end
 
    -- identify the block type/subname
    local add       = "";
    local blocktype = found[1];
+
    if( curr_index > 0 ) then
 
       for k,v in pairs( colormachine.data ) do
-         if( curr_index > 0 and add=="" and parts[1] == v.modname and liste[ curr_index ] == v.add ) then
+         if( curr_index > 0 and add=="" and mod_name == v.modname and (liste[ curr_index ].."_") == v.add ) then
             add        = v.add;
             blocktype  = k;
             curr_index = curr_index - 1;
@@ -611,11 +605,183 @@ colormachine.main_menu_formspec = function( pos, option )
       print( 'colormachine: ERROR: leftover name parts for '..tostring( bname )..": "..minetest.serialize( liste ));
    end
 
+   return { error_code = nil,
+            found_name = found_name,
+            blocktype  = blocktype};
+end
+
+
+
+-- if the player has selected a color, show all blocks in that color
+colormachine.blocktype_menu = function( meta, new_color )
+
+   new_color = colormachine.decode_color_name( meta, new_color );
+
+   -- keep the same size as with the color selector
+   local form = "size["..tostring( #colormachine.colors+2 )..",10]".."label[5,0;Select a blocktype:]"..
+                "label[0.2,1.2;name]"..
+                "label[0.2,2.2;unpainted]"..
+                "label[0.2,3.2;colored]"..
+                "button[1,0.5;4,1;dye_management;Manage stored dyes]"..
+                "button[5,0.5;4,1;main_menu;Back to main menu]";
+   local x = 1;
+   local y = 2;
+
+   for i,k in ipairs( colormachine.ordered ) do
+
+      -- only installed mods are of intrest
+      if( k ~= nil and colormachine.data[ k ].installed == 1 ) then
+
+         -- that particular mod may not offer this color
+         form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..colormachine.data[k].descr.."]"..
+                  "item_image["..tostring(x)..","..tostring(y    )..";1,1;"..colormachine.data[k].block.."]"; 
+
+         local translated_color = colormachine.translate_color_name( meta, k, new_color, nil, nil, nil, 1 );
+         if( translated_color ~= nil ) then
+            form = form..  "item_image["..tostring(x)..","..tostring(y+1)..";1,1;"..translated_color.."]"; 
+         else
+            form = form.."button["..      tostring(x)..","..tostring(y+1)..";1,1;"..k..";n/a]";
+         end
+
+         x = x+1;
+         if( x>13 ) then
+            x = 1;
+            y = y+3;
+            form = form..
+                "label[0.2,"..tostring(y-1)..".2;name]"..
+                "label[0.2,"..tostring(y  )..".2;unpainted]"..
+                "label[0.2,"..tostring(y+1)..".2;colored]";
+         end
+      end
+   end
+   return form;
+end
+
+
+
+-- this function tries to figure out which block type was inserted and how the color can be decoded
+colormachine.main_menu_formspec = function( pos, option )
+
+   local i = 0;
+   local k = 0;
+   local v = 0;
+
+   local form = "size[11,9]"..
+                "list[current_player;main;1,5;8,4;]"..
+                "label[3,0.2;Spray booth main menu]"..
+                "button[1,1;4,1;dye_management;Manage stored dyes]"..
+                "button[5,1;4,1;blocktype_menu;Show supported blocks]"..
+
+                "label[1,2.5;input:]"..
+                "list[current_name;input;1,3.0;1,1;]";
+
+   local meta = minetest.env:get_meta(pos);
+   local inv  = meta:get_inventory();
+
+   -- display the name of the color the machine is set to
+   form = form.."label[2.2,4.3;Current painging color:]"..
+                "label[5.0,4.3;"..(meta:get_string('selected_name') or "?" ).."]"..
+   -- display the owner name
+                "label[6,0.2;(owner: "..(meta:get_string('owner') or "?" )..")]";
+
+   if( inv:is_empty( "input" )) then
+      form = form.."label[2.2,3.0;Insert block to be analyzed.]";
+      return form;
+   end
+
+   local stack = inv:get_stack( "input", 1);
+   local bname = stack:get_name();
+   -- lets find out if this block is one of the unpainted basic blocks calling for paint
+   local found = {};
+   for k,v in pairs( colormachine.data ) do
+      if( bname == v.block ) then
+         table.insert( found, k );
+      end
+   end 
+
+   -- make sure all output fields are empty
+   for i = 1, inv:get_size( "output" ) do
+      inv:set_stack( "output", i, "" );
+   end
+
+   local anz_blocks = stack:get_count();
+
+   -- a block that can be colored
+   if( #found > 0 ) then
+    
+      local anz_found  = 0;
+      for i,v in ipairs( found ) do
+         if( i <= inv:get_size( "output" )) then
+
+            -- offer the description-link
+            form = form.."button["..tostring(2+i)..","..tostring(1.8)..";1,1;"..v..";"..colormachine.data[v].descr.."]";
+
+            local translated_color = colormachine.translate_color_name( meta, v, meta:get_string('selected_name'), nil, nil, nil, 1 );
+            --print( 'BLOCK type to use: '..tostring(v).."  translated_color: "..tostring(translated_color)..".");
+            if( translated_color ~= nil ) then
+               inv:set_stack( "output", i, translated_color.." "..tostring( anz_blocks ));
+
+
+               -- this time, we want the texture
+               translated_color = colormachine.translate_color_name( meta, v, meta:get_string( 'selected_name'), nil, nil, nil, 0 );
+               if( translated_color ~= nil ) then
+                  --form = form..  "item_image["..tostring(x)..","..tostring(y+1)..";1,1;"..translated_color.."]"; 
+                  form = form.."image_button["..tostring(2+i)..","..tostring(2.5)..";1,1;"..
+                                          translated_color..";"..v.."; ]"; -- when clicking here, the color selection menu for that blocktype is presented
+               end
+            else
+               inv:set_stack( "output", i, "" );
+
+--               form = form.."button["      ..tostring(2+i)..","..tostring(2.5)..";1,1;"..v..";"..colormachine.data[v].descr.."]";
+               form = form.."button["..      tostring(2+i)..","..tostring(2.5)..";1,1;"..v..";n/a]";
+            end
+            anz_found = anz_found + 1;
+
+
+         end
+      end
+      
+      -- this color was not supported
+      if( anz_found == 0 ) then
+         form = form.."label[2.2,3.0;Sorry, this block is not available in that color.]";
+         return form;
+      end
+      
+      form = form.."label[3,1.5;Available variants:]"..
+                   "list[current_name;output;3,3.5;"..tostring( anz_found )..",1;]";
+      return form;
+   end -- end of handling of blocks that can be colored
+
+
+   -- get the modname
+   local parts = string.split(bname,":");
+   if( #parts < 2 ) then
+      form = form.."label[2.2,3.0;ERROR! Failed to analyze the name of this node: "..tostring(bname).."]";
+      return form;
+   end
+      
+
+   -- it may be a dye source
+   for i,v in ipairs( colormachine.basic_dye_sources ) do
+      -- we have found the right color!
+      if( bname == v ) then
+         form = form.."label[2.2,3.0;This is a dye source.]";
+         return form;
+      end
+   end
+
+
+   -- it is possible that we are dealing with an already painted block - in that case we have to dertermie the color
+   local found_color_data = colormachine.get_color_from_blockname( parts[1], parts[2] );
+   if( found_color_data.error_code ~= nil ) then
+      form = form.."label[2.2,3.0;"..found_color_data.error_code..".]";
+      return form;
+   end
 
    -- the previous analyse was necessary in order to determine which block we ought to use
    if( option == 'remove_paint' ) then
       -- actually remove the paint from the 
-      inv:set_stack( "input", 1, colormachine.data[ blocktype ].block.." "..tostring( anz_blocks ));
+      inv:set_stack( "input", 1, colormachine.data[ found_color_data.blocktype ].block.." "..tostring( anz_blocks ));
       -- update display (we changed the input!)
       return colormachine.main_menu_formspec(pos, "analyze");
    end
@@ -623,17 +789,17 @@ colormachine.main_menu_formspec = function( pos, option )
 
    if( option == 'adapt_color' ) then
       -- actually change the color
-      colormachine.decode_color_name( meta, found_name );
+      colormachine.decode_color_name( meta, found_color_data.found_name );
       -- default color changed - update the menu
       return colormachine.main_menu_formspec(pos, "analyze");
    end
 
    -- print color name; select as input color / remove paint
-   form = form.."label[2.2,2.5;This is: "..tostring( found_name )..".]"..
-                "button[6,3.0;3,1;remove_paint;Remove paint]";
+   form = form.."label[2.2,3.0;This is: "..tostring( found_color_data.found_name )..".]"..
+                "button[6,3.5;3,1;remove_paint;Remove paint]";
 
    if( found_name ~= meta:get_string( 'selected_name' )) then
-      form = form.."button[6,2.1;3,1;adapt_color;Set as new color]";
+      form = form.."button[6,2.6;3,1;adapt_color;Set as new color]";
    else
       form = form.."label[5.5,2.0;This is the selected color.]";
    end
@@ -750,12 +916,32 @@ colormachine.on_metadata_inventory_take = function( pos, listname, index, stack,
    local meta = minetest.env:get_meta(pos);
    local inv  = meta:get_inventory();
 
+
+   if( listname == "output" ) then
+
+      -- TODO: consume color for painted blocks
+
+      -- calculate how much was taken
+      local anz_taken   = stack:get_count();
+      local anz_present = inv:get_stack("input",1):get_count();
+      anz_present = anz_present - anz_taken;
+      if( anz_present <= 0 ) then
+         inv:set_stack( "input", 1, "" ); -- everything used up
+      else
+         inv:set_stack( "input", 1, inv:get_stack("input",1):get_name().." "..tostring( anz_present ));
+      end
+        
+      -- the main menu needs to be updated as well
+      meta:set_string( 'formspec', colormachine.main_menu_formspec( pos, "analyze" ));
+      return;
+   end
+
+
    if( listname == "input" ) then
       -- update the main menu accordingly
       meta:set_string( 'formspec', colormachine.main_menu_formspec( pos, "analyze" ));
       return;
    end
-   -- TODO: handle taking of output
 end
 
 
@@ -795,7 +981,7 @@ colormachine.init = function()
                 "label[0.1,2;dyes:]"..
                 "label[0.1,3;storage:]"..
                 "button[1,4;4,1;main_menu;Back to main menu]"..
-                "button[5,4;4,1;blocktype_menu;Select blocktype]"..
+                "button[5,4;4,1;blocktype_menu;Show supported blocks]"..
                 "list[current_name;dyes;1,3;"..tostring(#colormachine.basic_dye_sources)..",1;]";
 
    for i,k in ipairs( colormachine.basic_dye_sources ) do
@@ -846,11 +1032,12 @@ minetest.register_node("colormachine:colormachine", {
            local inv = meta:get_inventory();
            inv:set_size("input",     1);  -- input slot for blocks that are to be painted
            inv:set_size("refill",    1);  -- input slot for plants and other sources of dye pigments
-           inv:set_size("output",    6);  -- output slot for painted blocks - up to six alternate coloring schems supported
+           inv:set_size("output",    8);  -- output slot for painted blocks - up to 8 alternate coloring schems supported (blox has 8 for stone!)
            inv:set_size("paintless", 1);  -- output slot for blocks with paint scratched off
            inv:set_size("dyes",      8);  -- internal storage for the dye powders
 
-           meta:set_string( 'formspec', colormachine.blocktype_menu( meta, 'white' ));
+           --meta:set_string( 'formspec', colormachine.blocktype_menu( meta, 'white' ));
+           meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
         end,
 
         after_place_node = function(pos, placer)
@@ -886,7 +1073,17 @@ minetest.register_node("colormachine:colormachine", {
               elseif( k=='key_escape') then
                  -- nothing to do
               else
-                 meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k )); 
+                 local inv = meta:get_inventory();
+            
+                 -- if no input is present, show the block selection menu
+                 if( k=="blocktype_menu" or inv:is_empty( "input" )) then
+                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k )); 
+
+                 -- else set the selected color and go back to the main menu
+                 else
+                    colormachine.decode_color_name( meta, k );
+                    meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
+                 end
               end
            end
         end,

@@ -6,3 +6,6 @@ unifiedbricks?
 stained_glass?
 cotton?
 wool?
+flags?
+blox?
+homedecor?
