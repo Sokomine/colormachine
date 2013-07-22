@@ -403,7 +403,7 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       -- stained_glass needs an exception here because it uses a slightly different naming scheme
       if( colormachine.data[ k ].modname == 'stained_glass') then
 
-         if( g==-1 ) then
+         if( g>0 ) then
             return nil; -- no grey values for them
          end
          local h_trans = {yellow=1, lime=2, green=3, aqua=4, cyan=5, skyblue=6, blue=7, violet=8, magenta=9, redviolet=10, red=11,orange=12};
@@ -828,7 +828,7 @@ colormachine.main_menu_formspec = function( pos, option )
       
       -- this color was not supported
       if( anz_found == 0 ) then
-         form = form.."label[2.2,3.0;Sorry, this block is not available in that color.]";
+         form = form.."label[2.2,3.0;Block is not available in that color.]";
          return form;
       end
       
@@ -1029,7 +1029,7 @@ colormachine.on_metadata_inventory_take = function( pos, listname, index, stack,
 
       local amount_needed = math.ceil( stack:get_count() / p );
       local amount_done   = colormachine.calc_dyes_needed( meta, inv, amount_needed, 1 );
-print( ' NEEDED: '..tostring( amount_needed )..' DONE: '..tostring( amount_done )); -- TODO
+--print( ' NEEDED: '..tostring( amount_needed )..' DONE: '..tostring( amount_done )); -- TODO
       if( amount_done > amount_needed ) then
 -- TODO: leftover color - how to handle?
       end
@@ -1261,7 +1261,7 @@ colormachine.init = function()
 
    local form = "size[14,10]"..
                 "list[current_player;main;1,5;8,4;]"..
-                "label[1,0.2;Insert dye sources here -->]"..
+                "label[1,0.2;"..minetest.formspec_escape('Insert dye sources here -->').."]"..
                 "list[current_name;refill;4,0;1,1;]"..
                 "label[6,0.2;Selected color:]"..
                 "label[0.1,1;sources:]"..
