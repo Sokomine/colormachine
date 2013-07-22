@@ -19,6 +19,14 @@
 --]]
 
 
+
+-- Version 0.2
+
+-- Changelog: 
+-- 22.07.13 Added textures provided by Vanessae
+--          fixed a bug concerning normal dyes (when unifieddyes is not installed)
+    
+-- adds a function to check ownership of a node; taken from VanessaEs homedecor mod
 colormachine = {};
 
 colormachine.colors = {

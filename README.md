@@ -1,4 +1,5 @@
-Work in progress
+If any menu shows something unexpected, please go to another menu page
+and come back from there. This ought to update the first menu page.
 
 depends on: dye
 
@@ -12,7 +13,3 @@ wool
 flags
 blox
 
-
-TODO:
-- determine which dyes are needed to create the selected color
-- actually consume dyes when applying color
