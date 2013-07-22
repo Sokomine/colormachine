@@ -1559,3 +1559,12 @@ minetest.register_node("colormachine:colormachine", {
            return true
         end
 })
+
+minetest.register_craft({
+        output = 'colormachine:colormachine',
+        recipe = {
+                { 'default:gold_ingot',  'default:glass',       'default:gold_ingot', },
+                { 'default:mese',        'default:glass',       'default:mese'        },
+                { 'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot' }
+        }
+})
