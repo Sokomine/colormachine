@@ -985,7 +985,7 @@ colormachine.on_metadata_inventory_put = function( pos, listname, index, stack, 
 
             color_name = colormachine.colors_and_greys[ i ];
             -- add four times that much to the storage
-            if( i==4 or i==6 or i==8 or i==9 or i==12 or i==13 ) then
+            if( i==4 or i==6 or i==8 or i==12 or i==14 ) then
 
                if( colormachine.data[ 'unifieddyes_' ].installed == 0 ) then
                   minetest.chat_send_player( player:get_player_name(), 'Sorry, this color requires unifieddyes (which is not installed).');
@@ -1256,7 +1256,9 @@ colormachine.init = function()
 
    -- if no flowers are present, take dye sources from default (so we only have to depend on dyes)
    if( minetest.get_modpath( "flowers") == nil ) then
-      colormachine.basic_dye_sources  = colormachine.alternate_basic_dye_sources;
+      for i,v in ipairs( colormachine.alternate_basic_dye_sources ) do
+         colormachine.basic_dye_sources[ i ]  = colormachine.alternate_basic_dye_sources[ i ];
+      end
    end
 
    local form = "size[14,10]"..
@@ -1285,7 +1287,7 @@ colormachine.init = function()
    for i,k in ipairs( colormachine.colors ) do
    
       local prefix = 'dye:';
-      if( i==4 or i==6 or i==8 or i==9 or i==12 or i==13 ) then
+      if( i==4 or i==6 or i==8 or i==12 or i==14 ) then
          if( colormachine.data[ 'unifieddyes_' ].installed == 1 ) then
             prefix = 'unifieddyes:';
          else
