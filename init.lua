@@ -1393,7 +1393,14 @@ minetest.after( 5, colormachine.init );
 minetest.register_node("colormachine:colormachine", {
         description = "spray booth",
 
-        tiles = {"default_chest.png"},
+        tiles = {
+		"colormachine_top.png",
+		"colormachine_bottom.png",
+		"colormachine_side.png",
+		"colormachine_side.png",
+		"colormachine_side.png",
+		"colormachine_front.png",
+	},
 
         paramtype2 = "facedir",
         groups = {cracky=2},
