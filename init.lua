@@ -26,6 +26,7 @@
 -- 24.08.13 Changed mainmenu so that it hopefully gets more intuitive.
 --          Added support for coloredblocks (two-colored blocks).
 --          Changed name of superglowglass to super_glow_glass for current moreblocks.
+--          Added config option for new stained_glass version.
 -- 02.08.13 In creative mode, no dyes are consumed, and an entire stack can be painted at once.
 --          Added some more labels in the main menu to make it easier to understand.
 -- 22.07.13 Added textures provided by Vanessae
@@ -49,6 +50,9 @@ colormachine.colors = {
         "redviolet"
 }
 
+
+-- set this to 0 if you're using that branch of stained_glass where the node names correspond to those of unified_dyes
+local stained_glass_exception = 1;
 
 -- the names of suitable sources of that color (note: this does not work by group!);
 -- you can add your own color sources here if you want
@@ -435,7 +439,7 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       prefix = colormachine.data[ k ].modname..":"..colormachine.data[ k ].add;
 
       -- stained_glass needs an exception here because it uses a slightly different naming scheme
-      if( colormachine.data[ k ].modname == 'stained_glass') then
+      if( colormachine.data[ k ].modname == 'stained_glass' and stained_glass_exception==1) then
 
          if( g>0 ) then
             return nil; -- no grey values for them
@@ -584,7 +588,7 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
    end
      
    -- another case of special treatment needed; at least the color is given in the tiles 
-   if( mod_name =='stained_glass' ) then 
+   if( mod_name =='stained_glass' and stained_glass_exception==1) then 
 
       local original_node = minetest.registered_nodes[ bname ];
       if( original_node ~= nil ) then
