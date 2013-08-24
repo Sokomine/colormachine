@@ -20,9 +20,13 @@
 
 
 
--- Version 0.2
+-- Version 0.3
 
 -- Changelog: 
+-- 24.08.13 Changed mainmenu so that it hopefully gets more intuitive.
+--          Added support for coloredblocks (two-colored blocks).
+-- 02.08.13 In creative mode, no dyes are consumed, and an entire stack can be painted at once.
+--          Added some more labels in the main menu to make it easier to understand.
 -- 22.07.13 Added textures provided by Vanessae
 --          fixed a bug concerning normal dyes (when unifieddyes is not installed)
     
@@ -169,6 +173,27 @@ colormachine.data = {
    forniture_armchair_top_   = { nr=32, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
    homedecor_curtain_        = { nr=33, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_"},
 
+   coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:white_white", add="red_",p=1},
+   coloredblocks_yellow_     = { nr=35, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_yel", block="coloredblocks:white_white", add="yellow_",p=1},
+   coloredblocks_green_      = { nr=36, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_gre", block="coloredblocks:white_white", add="green_",p=1},
+   coloredblocks_cyan_       = { nr=37, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_cya", block="coloredblocks:white_white", add="cyan_",p=1},
+   coloredblocks_blue_       = { nr=38, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_blu", block="coloredblocks:white_white", add="blue_",p=1},
+   coloredblocks_magenta_    = { nr=39, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_mag", block="coloredblocks:white_white", add="magenta_",p=1},
+   coloredblocks_brown_      = { nr=40, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bro", block="coloredblocks:white_white", add="brown_",p=1},
+   coloredblocks_white_      = { nr=41, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_whi", block="coloredblocks:white_white", add="white_",p=1},
+   coloredblocks_black_      = { nr=42, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bla", block="coloredblocks:white_white", add="black_",p=1},
+
+--[[
+   coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:red", add="red_",p=1},
+   coloredblocks_yellow_     = { nr=35, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_yel", block="coloredblocks:yellow", add="yellow_",p=1},
+   coloredblocks_green_      = { nr=36, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_gre", block="coloredblocks:green", add="green_",p=1},
+   coloredblocks_cyan_       = { nr=37, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_cya", block="coloredblocks:cyan", add="cyan_",p=1},
+   coloredblocks_blue_       = { nr=38, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_blu", block="coloredblocks:blue", add="blue_",p=1},
+   coloredblocks_magenta_    = { nr=39, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_mag", block="coloredblocks:magenta", add="magenta_",p=1},
+   coloredblocks_brown_      = { nr=40, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bro", block="coloredblocks:brown", add="brown_",p=1},
+   coloredblocks_white_      = { nr=41, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_whi", block="coloredblocks:white", add="",p=1},
+   coloredblocks_black_      = { nr=42, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bla", block="coloredblocks:black", add="black_",p=1},
+--]]
 }
 
 
@@ -473,6 +498,44 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
    if( k=='cotton_' and new_color=='grey') then
       new_color = 'mediumgrey';
    end
+  
+
+   -- those have split textures...
+   if( colormachine.data[k].modname == 'coloredblocks') then 
+
+
+
+      -- we are looking for the image name
+      if( prefix==k ) then
+
+         if( new_color == 'dark_orange') then
+            new_color = 'brown';
+         end
+
+         -- show the top of the blocks in the individual formspec
+         if( not(meta) ) then
+            return 'coloredblocks_'..new_color..postfix;
+      end
+      -- show the side view in the main menu
+         return string.sub(k, 1, string.len( k )-1)..'half'..postfix;
+-- TODO
+
+--[[
+
+         if( new_color == 'dark_orange') then
+            new_color = 'brown';
+         end
+
+         return 'coloredblocks_'..new_color..postfix;
+
+      elseif( new_color..'_' == colormachine.data[k].add ) then 
+
+         prefix = 'coloredblocks:';
+--]]
+      end
+
+   end
+
 
    -- normal dyes (also used for wool) use a diffrent naming scheme
    if( colormachine.data[k].u == 0) then
@@ -756,21 +819,26 @@ colormachine.main_menu_formspec = function( pos, option )
 
    local form = "size[11,9]"..
                 "list[current_player;main;1,5;8,4;]"..
-                "label[3,0.2;Spray booth main menu]"..
-                "button[1,1;4,1;dye_management;Manage stored dyes]"..
-                "button[5,1;4,1;blocktype_menu;Show supported blocks]"..
+-- TODO
+--                "label[3,0.2;Spray booth main menu]"..
+                "button[6.5,0.25;3,1;dye_management;Manage stored dyes]"..
+                "button[6.5,0.75;3,1;blocktype_menu;Show supported blocks]"..
 
-                "label[1,2.5;input:]"..
-                "list[current_name;input;1,3.0;1,1;]";
+                "label[3,0.0;1. Input - Insert material to paint:]"..
+                "list[current_name;input;4.5,0.5;1,1;]";
+
+   if( minetest.setting_getbool("creative_mode") ) then
+      form = form.."label[0.5,0.25;CREATIVE MODE:]".."label[0.5,0.75;no dyes or input consumed]";
+   end
 
    local meta = minetest.env:get_meta(pos);
    local inv  = meta:get_inventory();
 
    -- display the name of the color the machine is set to
-   form = form.."label[2.2,4.3;Current painging color:]"..
-                "label[5.0,4.3;"..(meta:get_string('selected_name') or "?" ).."]"..
+   form = form.."label[1.0,4.3;Current painting color:]"..
+                "label[3.5,4.3;"..(meta:get_string('selected_name') or "?" ).."]"..
    -- display the owner name
-                "label[6,0.2;(owner: "..(meta:get_string('owner') or "?" )..")]";
+                "label[7,4.3;Owner: "..(meta:get_string('owner') or "?" ).."]";
 
    if( inv:is_empty( "input" )) then
       form = form.."label[2.2,3.0;Insert block to be analyzed.]";
@@ -796,17 +864,22 @@ colormachine.main_menu_formspec = function( pos, option )
 
    -- a block that can be colored
    if( #found > 0 ) then
-    
+
+      local out_offset = 3.5-math.floor( #found / 2 );
+      if( out_offset < 0 ) then
+         out_offset = 0;
+      end
+
       local anz_found  = 0;
       local p_values   = {}; -- how many blocks can be colored with one pigment?
       for i,v in ipairs( found ) do
          if( i <= inv:get_size( "output" )) then
 
             -- offer the description-link
-            form = form.."button["..tostring(2+i)..","..tostring(1.8)..";1,1;"..v..";"..colormachine.data[v].descr.."]";
+            form = form.."button["..tostring(out_offset+i)..","..tostring(1.45)..";1,1;"..v..";"..colormachine.data[v].descr.."]";
 
             -- when clicking here, the color selection menu for that blocktype is presented
-            local button = colormachine.print_color_image( meta, v, meta:get_string('selected_name'), nil, nil, nil, tostring(2+i), tostring(2.5),1 );
+            local button = colormachine.print_color_image( meta, v, meta:get_string('selected_name'), nil, nil, nil, tostring(out_offset+i), tostring(2.0),1 );
 
             if( button ~= "" ) then
 
@@ -814,7 +887,13 @@ colormachine.main_menu_formspec = function( pos, option )
                -- one pigment is enough for factor blocks:
                local factor         = colormachine.data[ v ].p;
                -- how many of these blocks can we actually paint?
-               local can_be_painted = colormachine.calc_dyes_needed( meta, inv, math.ceil( anz_blocks / factor ), 0 );
+
+               local can_be_painted = 0;
+               if( not( minetest.setting_getbool("creative_mode") )) then
+                  can_be_painted = colormachine.calc_dyes_needed( meta, inv, math.ceil( anz_blocks / factor ), 0 );
+               else
+                  can_be_painted = 99; -- an entire stack can be painted in creative mode
+               end
                inv:set_stack( "output", i, block_name.." "..tostring( math.min( can_be_painted * factor, anz_blocks )));
 
                p_values[ i ] = factor;
@@ -824,11 +903,9 @@ colormachine.main_menu_formspec = function( pos, option )
                inv:set_stack( "output", i, "" );
 
 --               form = form.."button["      ..tostring(2+i)..","..tostring(2.5)..";1,1;"..v..";"..colormachine.data[v].descr.."]";
-               form = form.."button["..      tostring(2+i)..","..tostring(2.5)..";1,1;"..v..";n/a]";
+               form = form.."button["..      tostring(out_offset+i)..","..tostring(2.0)..";1,1;"..v..";n/a]";
             end
             anz_found = anz_found + 1;
-
-
          end
       end
       -- so that we can determine the factor when taking blocks from the output slots
@@ -840,8 +917,9 @@ colormachine.main_menu_formspec = function( pos, option )
          return form;
       end
       
-      form = form.."label[3,1.5;Available variants:]"..
-                   "list[current_name;output;3,3.5;"..tostring( anz_found )..",1;]";
+      form = form.."label[3.0,1.2;2. Select color for any style:]"..
+                   "label[3.0,2.9;3. Take output (determines style):]"..
+                   "list[current_name;output;"..tostring(out_offset+1)..",3.5;"..tostring( anz_found )..",1;]";
       return form;
    end -- end of handling of blocks that can be colored
 
@@ -1024,6 +1102,13 @@ colormachine.on_metadata_inventory_take = function( pos, listname, index, stack,
 
 
    if( listname == "output" ) then
+
+      -- in creative mode, no pigments are consumed
+      if( minetest.setting_getbool("creative_mode") ) then
+         -- update the main menu
+         meta:set_string( 'formspec', colormachine.main_menu_formspec( pos, "analyze" ));
+         return;
+      end
 
       -- consume color for painted blocks
       local str      = meta:get_string( 'p_values' );
@@ -1387,7 +1472,7 @@ end
 
 
 -- delay initialization so that modules are hopefully loaded
-minetest.after( 5, colormachine.init );
+minetest.after( 0, colormachine.init );
 
 
 --    flowers:       6 basic colors + black + white
@@ -1430,7 +1515,7 @@ minetest.register_node("colormachine:colormachine", {
            local inv = meta:get_inventory();
            inv:set_size("input",     1);  -- input slot for blocks that are to be painted
            inv:set_size("refill",    1);  -- input slot for plants and other sources of dye pigments
-           inv:set_size("output",    8);  -- output slot for painted blocks - up to 8 alternate coloring schems supported (blox has 8 for stone!)
+           inv:set_size("output",   14);  -- output slot for painted blocks - up to 8 alternate coloring schems supported (blox has 8 for stone!)
            inv:set_size("paintless", 1);  -- output slot for blocks with paint scratched off
            inv:set_size("dyes",     18);  -- internal storage for the dye powders
 
