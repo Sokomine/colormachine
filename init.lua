@@ -25,6 +25,7 @@
 -- Changelog: 
 -- 24.08.13 Changed mainmenu so that it hopefully gets more intuitive.
 --          Added support for coloredblocks (two-colored blocks).
+--          Changed name of superglowglass to super_glow_glass for current moreblocks.
 -- 02.08.13 In creative mode, no dyes are consumed, and an entire stack can be painted at once.
 --          Added some more labels in the main menu to make it easier to understand.
 -- 22.07.13 Added textures provided by Vanessae
@@ -131,9 +132,9 @@ colormachine.data = {
 
 -- stained_glass: has a "faint" and "pastel" version as well (which are kind of additional shades used only by this mod)
    -- no shades of grey for the glass
-   stained_glass_            = { nr=7,  modname='stained_glass', shades={1,0,1,1,1,1,1,1}, grey_shades={0,0,0,0,0}, u=1, descr="glass",  block="moreblocks:superglowglass", add="",p=2},
-   stained_glass_faint_      = { nr=8,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="fglass", block="moreblocks:superglowglass", add="",p=2},
-   stained_glass_pastel_     = { nr=9,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="pglass", block="moreblocks:superglowglass", add="",p=2},
+   stained_glass_            = { nr=7,  modname='stained_glass', shades={1,0,1,1,1,1,1,1}, grey_shades={0,0,0,0,0}, u=1, descr="glass",  block="moreblocks:super_glow_glass", add="",p=2},
+   stained_glass_faint_      = { nr=8,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="fglass", block="moreblocks:super_glow_glass", add="",p=2},
+   stained_glass_pastel_     = { nr=9,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="pglass", block="moreblocks:super_glow_glass", add="",p=2},
 
 -- cotton:
    cotton_                   = { nr=10, modname='cotton',        shades={1,0,1,1,1,1,1,1}, grey_shades={1,1,1,1,1}, u=1, descr="cotton", block="cotton:white",   add="", p=8  },
