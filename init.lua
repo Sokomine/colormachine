@@ -23,6 +23,9 @@
 -- Version 0.3
 
 -- Changelog: 
+-- 01.01.14 Added support for plasticbox mod
+-- 25.08.13 Added support for framedglass from technic.
+--          Added support for shells_dye (lightglass) from the sea mod.
 -- 24.08.13 Changed mainmenu so that it hopefully gets more intuitive.
 --          Added support for coloredblocks (two-colored blocks).
 --          Changed name of superglowglass to super_glow_glass for current moreblocks.
@@ -52,7 +55,7 @@ colormachine.colors = {
 
 
 -- set this to 0 if you're using that branch of stained_glass where the node names correspond to those of unified_dyes
-local stained_glass_exception = 1;
+local stained_glass_exception = 0;
 
 -- the names of suitable sources of that color (note: this does not work by group!);
 -- you can add your own color sources here if you want
@@ -140,6 +143,12 @@ colormachine.data = {
    stained_glass_faint_      = { nr=8,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="fglass", block="moreblocks:super_glow_glass", add="",p=2},
    stained_glass_pastel_     = { nr=9,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="pglass", block="moreblocks:super_glow_glass", add="",p=2},
 
+   -- use 9.5 to insert it between stained glass and cotton
+   framedglass_              = { nr=9.5, modname='framedglass',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="fglass", block="framedglass:steel_framed_obsidian_glass", add="steel_framed_obsidian_glass",p=1},
+
+   shells_dye_               = { nr=9.6, modname='shells_dye',   shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="lglass", block="shells_dye:whitelightglass", add="",p=1 },
+-- TODO shells_dye:whitelightglass
+
 -- cotton:
    cotton_                   = { nr=10, modname='cotton',        shades={1,0,1,1,1,1,1,1}, grey_shades={1,1,1,1,1}, u=1, descr="cotton", block="cotton:white",   add="", p=8  },
 
@@ -154,6 +163,7 @@ colormachine.data = {
    lrfurn_armchair_front_    = { nr=14, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="armchair",block="lrfurn:armchair_white", add="armchair_",p=1 },
    lrfurn_sofa_right_front_  = { nr=15, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="sofa",    block="lrfurn:longsofa_white", add="sofa_right_",p=1 },
    lrfurn_longsofa_middle_front_= { nr=16, modname='lrfurn',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="longsofa",block="lrfurn:sofa_white", add="longsofa_right_",p=1 },
+
 
    -- grey variants do not seem to exist, even though the textures arethere (perhaps nobody wants a grey flag!)
    flags_                    = { nr=17, modname='flags',         shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="flags",   block="flags:white", add="", p=3 },
@@ -177,6 +187,10 @@ colormachine.data = {
    homedecor_window_shutter_ = { nr=31, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16},
    forniture_armchair_top_   = { nr=32, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
    homedecor_curtain_        = { nr=33, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_"},
+
+
+   plasticbox_               = { nr=33.5, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
+
 
    coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:white_white", add="red_",p=1},
    coloredblocks_yellow_     = { nr=35, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_yel", block="coloredblocks:white_white", add="yellow_",p=1},
@@ -505,6 +519,18 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
    end
   
 
+   if( k=='framedglass_' and as_obj_name ~= 1) then
+      postfix = 'glass.png';
+   end
+
+   if( k=='shells_dye_' ) then
+      if( as_obj_name == 1 ) then
+        postfix = 'lightglass';
+      else
+        postfix = 'lightglass.png';
+      end
+   end
+
    -- those have split textures...
    if( colormachine.data[k].modname == 'coloredblocks') then 
 
@@ -541,10 +567,14 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
 
    end
 
+   if( colormachine.data[k].modname == 'plasticbox'
+       and new_color == 'dark_green') then 
+      return prefix..'darkgreen'..postfix;
+   end
 
    -- normal dyes (also used for wool) use a diffrent naming scheme
    if( colormachine.data[k].u == 0) then
-      if(     new_color == 'darkgrey' ) then
+      if(     new_color == 'darkgrey' and k ~= 'framedglass_') then
          return prefix..'dark_grey'..postfix;  
       elseif( new_color == 'dark_orange' ) then
          return prefix..'brown'..postfix;
@@ -598,6 +628,14 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
       end
    end
 
+   -- this mod does not seperate modname and objectname well enough :-( Naming scheme:- steel_framed_obsidian_glassCOLOR 
+   if( mod_name =='framedglass' ) then
+      block_name = string.sub( block_name, 28 );
+   end
+
+   if( mod_name =='shells_dye' ) then
+      block_name = string.sub( block_name, 1, string.len( block_name )-string.len( 'lightglass') );
+   end
 
    -- blox uses its own naming scheme
    if( mod_name =='blox' ) then
@@ -648,6 +686,10 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
 --      elseif( blockname == 'shutter_oak' ) then 
 --         block_name = 'shutter_orange';
       end
+   end
+
+   if( mod_name == 'plasticbox' and block_name == 'plasticbox_darkgreen' ) then
+      block_name = 'plasticbox_dark_green';
    end
 
    -- even cotton needs an exception...
@@ -735,6 +777,7 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
          found_name = found_name.."_s50";
       end
    end
+
    -- for blocks that do not follow the naming scheme - the color cannot be decoded
    if( g==-1 and c==0 ) then
       return { error_code ="This is a colored block: "..tostring( bname )..".", 
