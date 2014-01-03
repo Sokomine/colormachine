@@ -1493,7 +1493,7 @@ colormachine.init = function()
          -- lightgrey exists only in unifieddyes
          if( i== 2 ) then
             if( colormachine.data[ 'unifieddyes_' ].installed == 1 ) then
-               dye_name = 'unifieddyes:'..k;
+               dye_name = 'unifieddyes:lightgrey_paint'; --'unifieddyes:'..k;
             else
                dye_name = '';
             end
