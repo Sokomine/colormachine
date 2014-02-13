@@ -23,6 +23,9 @@
 -- Version 0.3
 
 -- Changelog: 
+-- 13.02.14 Added support for chests and locked chests from the kerova mod.
+--          Added support for hardenedclay mod (to a degree; that mod needs to be fixed first)
+--          Added optional obj_postfix support where blocknames are like MODNAME:PREFIX_COLOR_POSTFIX
 -- 01.01.14 Added support for plasticbox mod
 -- 25.08.13 Added support for framedglass from technic.
 --          Added support for shells_dye (lightglass) from the sea mod.
@@ -137,6 +140,8 @@ colormachine.data = {
    -- the multicolored bricks come in fewer intensities (only 3 shades) and support only 3 insted of 5 shades of grey
    unifiedbricks_multicolor_ = { nr=6,  modname='unifiedbricks', shades={1,0,0,0,1,0,1,0}, grey_shades={0,1,1,1,0}, u=1, descr="mbrick", block="default:brick", add="multicolor_",p=1},
 
+   hardenedclay_             = { nr=3.5, modname='hardenedclay', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="hclay",  block="default:sand", add="", obj_postfix='_hardened_clay',p=16},
+   
 -- stained_glass: has a "faint" and "pastel" version as well (which are kind of additional shades used only by this mod)
    -- no shades of grey for the glass
    stained_glass_            = { nr=7,  modname='stained_glass', shades={1,0,1,1,1,1,1,1}, grey_shades={0,0,0,0,0}, u=1, descr="glass",  block="moreblocks:super_glow_glass", add="",p=2},
@@ -191,6 +196,9 @@ colormachine.data = {
 
    plasticbox_               = { nr=33.5, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
 
+
+   kerova_chest_front_       = { nr=33.6, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerova", block="default:chest",  add="chest_",p=16},
+   kerova_chest_lock_        = { nr=33.7, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerolo", block="default:chest_locked", add="chest_", obj_postfix='_locked',p=16},
 
    coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:white_white", add="red_",p=1},
    coloredblocks_yellow_     = { nr=35, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_yel", block="coloredblocks:white_white", add="yellow_",p=1},
@@ -572,6 +580,11 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       return prefix..'darkgreen'..postfix;
    end
 
+   -- some mods need additional data be added after the color name
+   if( as_obj_name == 1 and colormachine.data[k].obj_postfix ) then
+	postfix = (colormachine.data[k].obj_postfix) ..postfix;
+   end
+	
    -- normal dyes (also used for wool) use a diffrent naming scheme
    if( colormachine.data[k].u == 0) then
       if(     new_color == 'darkgrey' and k ~= 'framedglass_') then
@@ -697,6 +710,23 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
       block_name = 'grey';
    end
 
+
+
+   local blocktype  = '';
+   -- some mods may have a postfix to their modname (which is pretty annoying)
+   for _,k in ipairs( found ) do
+      if( colormachine.data[k].obj_postfix ) then
+
+         local l = string.len( colormachine.data[k].obj_postfix);
+         if( string.len( block_name ) > l 
+         and string.sub( block_name, -1*l ) == colormachine.data[k].obj_postfix ) then
+
+            block_name = string.sub( block_name, 1, (-1*l)-1 );
+            blocktype  = k;
+         end
+      end
+   end
+
    -- try to analyze the name of this color; this works only if the block follows the color scheme
    local liste = string.split( block_name, "_" );
    local curr_index = #liste;
@@ -787,17 +817,23 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
 
    -- identify the block type/subname
    local add       = "";
-   local blocktype = found[1];
+   if( not( blocktype ) or blocktype == '' ) then
+
+      blocktype = found[1];
+   end
 
    if( curr_index > 0 ) then
 
       for k,v in pairs( colormachine.data ) do
-         if( curr_index > 0 and add=="" and mod_name == v.modname and (liste[ curr_index ].."_") == v.add ) then
+         -- prefix and postfix have to fit
+         if( curr_index > 0 and add=="" and mod_name == v.modname and (liste[ curr_index ].."_") == v.add  
+         -- if a postfix exists, we did check for that before and set blocktype accordingly
+            and( not( blocktype ) or blocktype=='' or blocktype==k)) then
             add        = v.add;
             blocktype  = k;
             curr_index = curr_index - 1;
          end
-      end 
+      end
    end
 
    if( curr_index > 0 ) then
