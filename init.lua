@@ -20,9 +20,16 @@
 
 
 
--- Version 0.3
+-- Version 0.5
 
 -- Changelog: 
+-- 11.06.14 Added support for clstone; see https://forum.minetest.net/viewtopic.php?f=9&t=9257
+--          Changed dye source for white dye from stone to clay as stone can now be colored.
+--          Added support for colorcubes; see https://forum.minetest.net/viewtopic.php?f=9&t=9486
+--          Updated support for new sea modpack; see https://forum.minetest.net/viewtopic.php?f=11&t=4627
+--          Adjusted support for hardenedclay; see https://forum.minetest.net/viewtopic.php?f=9&t=8232
+-- 12.03.14 Added support for colouredstonebricks. See https://forum.minetest.net/viewtopic.php?f=9&t=8784
+--          Modified support for hardenedclay due to progress in that mod.
 -- 13.02.14 Added support for chests and locked chests from the kerova mod.
 --          Added support for hardenedclay mod (to a degree; that mod needs to be fixed first)
 --          Added optional obj_postfix support where blocknames are like MODNAME:PREFIX_COLOR_POSTFIX
@@ -65,14 +72,14 @@ local stained_glass_exception = 0;
 colormachine.basic_dye_sources  = { "flowers:rose",      "flowers:tulip",         "flowers:dandelion_yellow", 
                                     "",                  "default:cactus",        "",  "",  "", -- no lime, no aqua, no cyan, no skyblue
                                     "flowers:geranium",  "flowers:viola",         "",  "",      -- no magenta, no redviolet
-                                    "default:stone", "", "", "", "default:coal_lump" };
+                                    "default:clay_lump", "", "", "", "default:coal_lump" };
 
 -- if flowers is not installed
 colormachine.alternate_basic_dye_sources  = { 
                                     "default:apple",     "default:desert_stone",  "default:sand",  
                                     "",                  "default:cactus",        "",  "",  "",
                                     "default:leaves",    "",                      "",  "" ,
-                                    "default:stone", "", "", "", "default:coal_lump" };
+                                    "default:clay_lump", "", "", "", "default:coal_lump" };
 
 
 
@@ -140,9 +147,19 @@ colormachine.data = {
    -- the multicolored bricks come in fewer intensities (only 3 shades) and support only 3 insted of 5 shades of grey
    unifiedbricks_multicolor_ = { nr=6,  modname='unifiedbricks', shades={1,0,0,0,1,0,1,0}, grey_shades={0,1,1,1,0}, u=1, descr="mbrick", block="default:brick", add="multicolor_",p=1},
 
-   hardenedclay_             = { nr=3.5, modname='hardenedclay', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="hclay",  block="default:sand", add="", obj_postfix='_hardened_clay',p=16},
+   hardenedclay_             = { nr=3.5, modname='hardenedclay', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="hclay",  block="hardenedclay:hardened_clay_white", add="hardened_clay_", obj_postfix='',p=16},
+   colouredstonebricks_      = { nr=3.6, modname='colouredstonebricks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="cbrick",  block="default:stonebrick", add="", obj_postfix='',p=1},
    
+   clstone_stone_            = { nr=3.7, modname='clstone',       shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clstone",block="default:stone", add="", p=1, obj_postfix='_stone' },
+
+   colorcubes_1_             = { nr=3.8, modname='colorcubes',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="ccubes",block="default:stone", add="", p=1, obj_postfix='_single' },
+   colorcubes_4_             = { nr=3.9, modname='colorcubes',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="ccube4",block="default:stone", add="", p=1, obj_postfix='_tiled' },
+   colorcubes_inward_        = { nr=3.91,modname='colorcubes',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="ccubei",block="default:stone", add="", p=1, obj_postfix='_inward' },
+   colorcubes_window_        = { nr=3.93,modname='colorcubes',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="ccubew",block="default:stone", add="", p=1, obj_postfix='_window' },
+
+
 -- stained_glass: has a "faint" and "pastel" version as well (which are kind of additional shades used only by this mod)
+
    -- no shades of grey for the glass
    stained_glass_            = { nr=7,  modname='stained_glass', shades={1,0,1,1,1,1,1,1}, grey_shades={0,0,0,0,0}, u=1, descr="glass",  block="moreblocks:super_glow_glass", add="",p=2},
    stained_glass_faint_      = { nr=8,  modname='stained_glass', shades={0,0,1,0,0,0,0,0}, grey_shades={0,0,0,0,0}, u=1, descr="fglass", block="moreblocks:super_glow_glass", add="",p=2},
@@ -151,8 +168,14 @@ colormachine.data = {
    -- use 9.5 to insert it between stained glass and cotton
    framedglass_              = { nr=9.5, modname='framedglass',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="fglass", block="framedglass:steel_framed_obsidian_glass", add="steel_framed_obsidian_glass",p=1},
 
+--   sea-modpack
    shells_dye_               = { nr=9.6, modname='shells_dye',   shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="lglass", block="shells_dye:whitelightglass", add="",p=1 },
 -- TODO shells_dye:whitelightglass
+   seaglass_seaglass_        = {nr=9.61, modname='seaglass',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="seagls", block="seaglass:seaglass", add="seaglass_", p=1},
+   seacobble_seacobble_      = {nr=9.62, modname='seacobble',    shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="seacob", block="seacobble:seacobble", add="seacobble_", p=1},
+   seastone_seastone_        = {nr=9.63, modname='seastone',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="seasto", block="seastone:seastone", add="seastone_", p=1},
+   seastonebrick_seastonebrick_={nr=9.64,modname='seastonebrick',shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="seastb", block="seastonebrick:seastonebrick", add="seastonebrick_", p=1},
+   seagravel_seagravel_      = {nr=9.65, modname='seagravel',    shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=1, descr="seagrv", block="seagravel:seagravel", add="seagravel_", p=1},
 
 -- cotton:
    cotton_                   = { nr=10, modname='cotton',        shades={1,0,1,1,1,1,1,1}, grey_shades={1,1,1,1,1}, u=1, descr="cotton", block="cotton:white",   add="", p=8  },
@@ -209,6 +232,7 @@ colormachine.data = {
    coloredblocks_brown_      = { nr=40, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bro", block="coloredblocks:white_white", add="brown_",p=1},
    coloredblocks_white_      = { nr=41, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_whi", block="coloredblocks:white_white", add="white_",p=1},
    coloredblocks_black_      = { nr=42, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bla", block="coloredblocks:white_white", add="black_",p=1},
+
 
 --[[
    coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:red", add="red_",p=1},
