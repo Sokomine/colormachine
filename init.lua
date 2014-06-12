@@ -28,6 +28,8 @@
 --          Added support for colorcubes; see https://forum.minetest.net/viewtopic.php?f=9&t=9486
 --          Updated support for new sea modpack; see https://forum.minetest.net/viewtopic.php?f=11&t=4627
 --          Adjusted support for hardenedclay; see https://forum.minetest.net/viewtopic.php?f=9&t=8232
+--          Added support for new blox blocks; see https://forum.minetest.net/viewtopic.php?id=1960#p24748
+--          Made the formspec a bit wider in order to account for all the new blocks.
 -- 12.03.14 Added support for colouredstonebricks. See https://forum.minetest.net/viewtopic.php?f=9&t=8784
 --          Modified support for hardenedclay due to progress in that mod.
 -- 13.02.14 Added support for chests and locked chests from the kerova mod.
@@ -209,8 +211,17 @@ colormachine.data = {
    blox_quarter_wood_        = { nr=27, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="W4Blox",  block="default:wood", add="quarter_wood",p=4 },
    blox_checker_wood_        = { nr=28, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="W8Blox",  block="default:wood", add="checker_wood",p=4},
    blox_diamond_wood_        = { nr=29, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WDBlox",  block="default:wood", add="diamond_wood",p=4},
+   blox_cross_wood_          = { nr=29.1, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WXBlox",  block="default:wood", add="cross_wood",p=4},
+   blox_loop_wood_           = { nr=29.3, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WLBlox",  block="default:wood", add="loop_wood",p=4},
+   blox_corner_wood_         = { nr=29.4, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="WCBlox",  block="default:wood", add="corner_wood",p=4},
 
-   blox_cobble_              = { nr=30, modname='blox',          shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CnBlox",  block="default:cobble", add="cobble",p=2 },
+   blox_cobble_              = { nr=30,   modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CnBlox",  block="default:cobble", add="cobble",p=2 },
+   blox_quarter_cobble_      = { nr=30.1, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="C4Blox",  block="default:cobble", add="quarter_cobble",p=4 },
+   blox_checker_cobble_      = { nr=30.2, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="C8Blox",  block="default:cobble", add="checker_cobble",p=4},
+   blox_diamond_cobble_      = { nr=30.3, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CDBlox",  block="default:cobble", add="diamond_cobble",p=4},
+   blox_cross_cobble_        = { nr=30.4, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CXBlox",  block="default:cobble", add="cross_cobble",p=4},
+   blox_loop_cobble_         = { nr=30.6, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CLBlox",  block="default:cobble", add="loop_cobble",p=4},
+   blox_corner_cobble_       = { nr=30.7, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CCBlox",  block="default:cobble", add="corner_cobble",p=4},
 
    homedecor_window_shutter_ = { nr=31, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16},
    forniture_armchair_top_   = { nr=32, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
@@ -925,7 +936,7 @@ colormachine.main_menu_formspec = function( pos, option )
    local k = 0;
    local v = 0;
 
-   local form = "size[11,9]"..
+   local form = "size[14,9]"..
                 "list[current_player;main;1,5;8,4;]"..
 -- TODO
 --                "label[3,0.2;Spray booth main menu]"..
