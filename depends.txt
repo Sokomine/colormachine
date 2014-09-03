@@ -12,3 +12,6 @@ homedecor?
 plasticbox?
 kerova?
 hardenedclay?
+clstone?
+colorcubes?
+colouredstonebricks?
