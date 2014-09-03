@@ -1092,7 +1092,6 @@ colormachine.main_menu_formspec = function( pos, option )
 
    -- it is possible that we are dealing with an already painted block - in that case we have to dertermie the color
    local found_color_data = colormachine.get_color_from_blockname( parts[1], parts[2] );
-print('DATA: '..minetest.serialize( found_color_data ));
    if( found_color_data.error_code ~= nil ) then
       form = form.."label[2.2,3.0;"..found_color_data.error_code..".]";
       return form;
