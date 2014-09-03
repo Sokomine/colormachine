@@ -23,6 +23,9 @@
 -- Version 0.5
 
 -- Changelog: 
+-- 03.09.14 Added a second block type menu.
+--          Updated dependency list.
+--          Added support for homedecor kitchen chairs, beds and bathroom tiles. Changed sorting order of blocks.
 -- 11.06.14 Added support for clstone; see https://forum.minetest.net/viewtopic.php?f=9&t=9257
 --          Changed dye source for white dye from stone to clay as stone can now be colored.
 --          Added support for colorcubes; see https://forum.minetest.net/viewtopic.php?f=9&t=9486
@@ -223,16 +226,19 @@ colormachine.data = {
    blox_loop_cobble_         = { nr=30.6, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CLBlox",  block="default:cobble", add="loop_cobble",p=4},
    blox_corner_cobble_       = { nr=30.7, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CCBlox",  block="default:cobble", add="corner_cobble",p=4},
 
-   homedecor_window_shutter_ = { nr=31, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16},
-   forniture_armchair_top_   = { nr=32, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
-   homedecor_curtain_        = { nr=33, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_"},
+   homedecor_window_shutter_ = { nr=16.1, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16},
+   forniture_armchair_top_   = { nr=16.2, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
+   forniture_kitchen_chair_sides_ = {nr=16.3, modname='homedecor',shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="kchair",   block="homedecor:chair", add="chair_",p=1},
+   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_foot", add="bed_",p=1, obj_postfix='_foot'},
+   homedecor_bathroom_tiles_ = {nr=16.5, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="htiles",   block="homedecor:tiles_1", add="tiles_",p=1},
+   homedecor_curtain_        = { nr=16.6, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_"},
 
 
-   plasticbox_               = { nr=33.5, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
+   plasticbox_               = { nr=16.7, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
 
 
-   kerova_chest_front_       = { nr=33.6, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerova", block="default:chest",  add="chest_",p=16},
-   kerova_chest_lock_        = { nr=33.7, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerolo", block="default:chest_locked", add="chest_", obj_postfix='_locked',p=16},
+   kerova_chest_front_       = { nr=16.8, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerova", block="default:chest",  add="chest_",p=16},
+   kerova_chest_lock_        = { nr=16.9, modname='kerova',      shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="kerolo", block="default:chest_locked", add="chest_", obj_postfix='_locked',p=16},
 
    coloredblocks_red_        = { nr=34, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_red", block="coloredblocks:white_white", add="red_",p=1},
    coloredblocks_yellow_     = { nr=35, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_yel", block="coloredblocks:white_white", add="yellow_",p=1},
@@ -574,6 +580,15 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       end
    end
 
+
+   if( k=='homedecor_bed_' ) then
+      if( as_obj_name == 1 ) then
+        --postfix = '_foot';
+      else
+        postfix = '_inv.png';
+      end
+   end
+
    -- those have split textures...
    if( colormachine.data[k].modname == 'coloredblocks') then 
 
@@ -871,6 +886,12 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
       end
    end
 
+   if( curr_index > 0 and #liste>0 and liste[1]=='chair' and blocktype == 'homedecor_bed_' ) then
+      return { error_code = nil,
+               found_name = found_name,
+               blocktype  = 'forniture_kitchen_chair_sides_'};
+   end
+
    if( curr_index > 0 ) then
       print( 'colormachine: ERROR: leftover name parts for '..tostring( bname )..": "..minetest.serialize( liste ));
    end
@@ -883,7 +904,7 @@ end
 
 
 -- if the player has selected a color, show all blocks in that color
-colormachine.blocktype_menu = function( meta, new_color )
+colormachine.blocktype_menu = function( meta, new_color, start_at_offset )
 
    new_color = colormachine.decode_color_name( meta, new_color );
 
@@ -900,7 +921,7 @@ colormachine.blocktype_menu = function( meta, new_color )
    for i,k in ipairs( colormachine.ordered ) do
 
       -- only installed mods are of intrest
-      if( k ~= nil and colormachine.data[ k ].installed == 1 ) then
+      if( k ~= nil and colormachine.data[ k ].installed == 1 and i > start_at_offset and i <= (start_at_offset + 3*13)) then 
 
          -- that particular mod may not offer this color
          form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..colormachine.data[k].descr.."]"..
@@ -921,6 +942,13 @@ colormachine.blocktype_menu = function( meta, new_color )
                 "label[0.2,"..tostring(y-1)..".2;name]"..
                 "label[0.2,"..tostring(y  )..".2;unpainted]"..
                 "label[0.2,"..tostring(y+1)..".2;colored]";
+            if( y>3 ) then
+                if( start_at_offset == 0 ) then
+                   form = form.."button[9,0.5;4,1;blocktype_menu2;Show further blocks]";
+                else
+                   form = form.."button[9,0.5;4,1;blocktype_menu;Back to first page]";
+                end
+            end
          end
       end
    end
@@ -1064,6 +1092,7 @@ colormachine.main_menu_formspec = function( pos, option )
 
    -- it is possible that we are dealing with an already painted block - in that case we have to dertermie the color
    local found_color_data = colormachine.get_color_from_blockname( parts[1], parts[2] );
+print('DATA: '..minetest.serialize( found_color_data ));
    if( found_color_data.error_code ~= nil ) then
       form = form.."label[2.2,3.0;"..found_color_data.error_code..".]";
       return form;
@@ -1703,8 +1732,10 @@ minetest.register_node("colormachine:colormachine", {
                  end
 
                  -- if no input is present, show the block selection menu
-                 if( k=="blocktype_menu" or inv:is_empty( "input" )) then
-                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k )); 
+                 if(     k=="blocktype_menu2" ) then
+                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k, 3*13 )); 
+                 elseif( k=="blocktype_menu" or inv:is_empty( "input" )) then
+                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k, 0 )); 
 
                  else
 
@@ -1751,12 +1782,12 @@ minetest.register_node("colormachine:colormachine", {
            if(   not( inv:is_empty("input"))
               or not( inv:is_empty("refill")))  then
               minetest.chat_send_player( player:get_player_name(), "Please remove the material in the input- and/or refill slot first!"); 
-              meta:set_string( 'formspec', colormachine.blocktype_menu( meta, meta:get_string('selected_name'))); 
+              meta:set_string( 'formspec', colormachine.blocktype_menu( meta, meta:get_string('selected_name'), 0)); 
               return false;
            end
            if(  not( inv:is_empty("dyes"))) then
               minetest.chat_send_player( player:get_player_name(), "Please remove the stored dyes first!"); 
-              meta:set_string( 'formspec', colormachine.blocktype_menu( meta, meta:get_string('selected_name') )); 
+              meta:set_string( 'formspec', colormachine.blocktype_menu( meta, meta:get_string('selected_name'), 0 )); 
               return false;
            end
 
