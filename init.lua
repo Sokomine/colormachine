@@ -20,7 +20,7 @@
 
 
 
--- Version 0.5
+-- Version 0.6
 
 -- Changelog: 
 -- 17.09.14 Added a modified version of Krocks paintroller from his paint_roller mod.
