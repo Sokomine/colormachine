@@ -23,6 +23,7 @@
 -- Version 0.5
 
 -- Changelog: 
+-- 17.09.14 Added a modified version of Krocks paintroller from his paint_roller mod.
 -- 03.09.14 Added a second block type menu.
 --          Updated dependency list.
 --          Added support for homedecor kitchen chairs, beds and bathroom tiles. Changed sorting order of blocks.
@@ -1150,6 +1151,7 @@ end
 colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 	local possible_blocks = {};
 	local unpainted_block = "";
+	local old_dye         = "";
 	for k,v in pairs( colormachine.data ) do
 		if( old_node_name == v.block and colormachine.data[ k ].installed==1) then
 			table.insert( possible_blocks, k );
@@ -1167,6 +1169,18 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 			return;
 		end
 		unpainted_block = colormachine.data[ found_color_data_block.blocktype ].block;
+		old_dye         = found_color_data_block.found_name;
+
+		-- figure out how the dye this block was painted with was called
+		local cdata = colormachine.decode_color_name( nil, old_dye );
+		if( cdata ) then
+			old_dye = colormachine.translate_color_name( nil, 'unifieddyes_', old_dye, cdata.c, cdata.s, cdata.g, 1 );
+			if( not( old_dye ) or old_dye == '' ) then
+				old_dye = colormachine.translate_color_name( nil, 'dye_', old_dye, cdata.c, cdata.s, cdata.g, 1 );
+			end
+		else
+			old_dye = '';
+		end
 	end
 	if( unpainted_block ~= "" and #possible_blocks < 1 ) then
 		for k,v in pairs( colormachine.data ) do
@@ -1178,7 +1192,7 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 
 	-- remove paint
 	if( not( dye_node_name ) or dye_node_name == "") then
-		return {unpainted_block};
+		return {possible={unpainted_block},old_dye = old_dye};
 	end
 
 	-- decode dye name
@@ -1208,7 +1222,7 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 	if( #found < 1 ) then
 		return;
 	end
-	return found;
+	return { possible=found, old_dye = old_dye };
 end
 
 
@@ -1885,3 +1899,5 @@ minetest.register_craft({
                 { 'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot' }
         }
 })
+
+dofile( minetest.get_modpath('colormachine')..'/paint_roller.lua');
