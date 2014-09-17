@@ -340,16 +340,24 @@ colormachine.decode_color_name = function( meta, new_color )
    -- perhaps it's one of the grey colors?
    for i,v in ipairs( colormachine.grey_names ) do
       if( v == liste[1] ) then
-         meta:set_string('selected_shade',      -1 ); -- grey-shade
-         meta:set_string('selected_grey_shade',  i );
-         meta:set_string('selected_color',      -1 ); -- we selected grey
-         meta:set_string('selected_name',       new_color );
-         return new_color;
+         if( meta ) then
+            meta:set_string('selected_shade',      -1 ); -- grey-shade
+            meta:set_string('selected_grey_shade',  i );
+            meta:set_string('selected_color',      -1 ); -- we selected grey
+            meta:set_string('selected_name',       new_color );
+            return new_color;
+         else
+            return { s=-1, g=i, c=-1 };
+         end
       end
    end
 
    if( #liste < 1 ) then
-      return meta:get_string('selected_name');
+      if( meta ) then
+         return meta:get_string('selected_name');
+      else
+         return nil;
+      end
    end
 
    local selected_shade = 2; -- if no other shade is selected, use plain color
@@ -362,7 +370,11 @@ colormachine.decode_color_name = function( meta, new_color )
    end
 
    if( #liste < 1 ) then
-      return meta:get_string('selected_name');
+      if( meta ) then
+         return meta:get_string('selected_name');
+      else
+         return nil;
+      end
    end
 
    local selected_color = -1;
@@ -375,7 +387,11 @@ colormachine.decode_color_name = function( meta, new_color )
  
    -- the color was not found! error! keep the old color
    if( selected_color == -1 ) then
-      return meta:get_string('selected_name');
+      if( meta ) then
+         return meta:get_string('selected_name');
+      else
+         return nil;
+      end
    end
 
    if( #liste > 0 and liste[1]=='s50') then
@@ -384,11 +400,15 @@ colormachine.decode_color_name = function( meta, new_color )
       selected_shade = selected_shade * 2 - 1;
    end
 
-   meta:set_string('selected_shade',      selected_shade ); -- grey-shade
-   meta:set_string('selected_grey_shade', -1 );
-   meta:set_string('selected_color',      selected_color ); -- we selected grey
-   meta:set_string('selected_name',       new_color );
-   return new_color;
+   if( meta ) then
+      meta:set_string('selected_shade',      selected_shade ); -- grey-shade
+      meta:set_string('selected_grey_shade', -1 );
+      meta:set_string('selected_color',      selected_color ); -- we selected grey
+      meta:set_string('selected_name',       new_color );
+      return new_color;
+   else
+      return { s=selected_shade, g=-1, c= selected_color };
+   end
 end
 
 
@@ -666,7 +686,6 @@ end
 colormachine.get_color_from_blockname = function( mod_name, block_name )
 
    local bname = mod_name..":"..block_name;
-
    local found = {};
    for k,v in pairs( colormachine.data ) do
       if( mod_name == v.modname ) then
@@ -1127,6 +1146,70 @@ colormachine.main_menu_formspec = function( pos, option )
 end
 
 
+-- returns a list of all blocks that can be created by applying dye_node_name to the basic node of old_node_name
+colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
+	local possible_blocks = {};
+	local unpainted_block = "";
+	for k,v in pairs( colormachine.data ) do
+		if( old_node_name == v.block and colormachine.data[ k ].installed==1) then
+			table.insert( possible_blocks, k );
+			unpainted_block = old_node_name;
+		end
+	end 
+
+	if( unpainted_block == "" ) then
+		local parts = string.split(old_node_name,":");
+		if( #parts < 2 ) then
+			return;
+		end
+		found_color_data_block = colormachine.get_color_from_blockname( parts[1], parts[2] );
+		if( found_color_data_block.error_code ~= nil ) then
+			return;
+		end
+		unpainted_block = colormachine.data[ found_color_data_block.blocktype ].block;
+	end
+	if( unpainted_block ~= "" and #possible_blocks < 1 ) then
+		for k,v in pairs( colormachine.data ) do
+			if( unpainted_block == v.block and colormachine.data[ k ].installed==1) then
+				table.insert( possible_blocks, k );
+			end
+		end
+	end 
+
+	-- remove paint
+	if( not( dye_node_name ) or dye_node_name == "") then
+		return {unpainted_block};
+	end
+
+	-- decode dye name
+	parts = string.split(dye_node_name,":");
+	if( #parts < 2 ) then
+		return;
+	end
+	local found_color_data_color = colormachine.get_color_from_blockname( parts[1], parts[2] );
+
+	if( found_color_data_color.error_code ~= nil ) then
+		return;
+	end
+	local dye_name = found_color_data_color.found_name;
+
+	local cdata = colormachine.decode_color_name( nil, dye_name );
+	if( not( cdata )) then
+		return;
+	end
+
+	-- find out for which block types/patterns this unpainted block is the basic one
+	local found = {};
+	for _,k in ipairs( possible_blocks ) do
+
+		local new_block_name = colormachine.translate_color_name( nil, k, dye_name, cdata.c, cdata.s, cdata.g, 1 );
+		table.insert( found, new_block_name );
+	end 
+	if( #found < 1 ) then
+		return;
+	end
+	return found;
+end
 
 
 colormachine.check_owner = function( pos, player )
