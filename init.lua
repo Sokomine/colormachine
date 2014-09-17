@@ -24,6 +24,7 @@
 
 -- Changelog: 
 -- 17.09.14 Added a modified version of Krocks paintroller from his paint_roller mod.
+--          Added additional storage area for dyes (works like a chest for now)
 -- 03.09.14 Added a second block type menu.
 --          Updated dependency list.
 --          Added support for homedecor kitchen chairs, beds and bathroom tiles. Changed sorting order of blocks.
@@ -984,7 +985,7 @@ colormachine.main_menu_formspec = function( pos, option )
    local k = 0;
    local v = 0;
 
-   local form = "size[14,9]"..
+   local form = "size[14.5,9]"..
                 "list[current_player;main;1,5;8,4;]"..
 -- TODO
 --                "label[3,0.2;Spray booth main menu]"..
@@ -992,7 +993,10 @@ colormachine.main_menu_formspec = function( pos, option )
                 "button[6.5,0.75;3,1;blocktype_menu;Show supported blocks]"..
 
                 "label[3,0.0;1. Input - Insert material to paint:]"..
-                "list[current_name;input;4.5,0.5;1,1;]";
+                "list[current_name;input;4.5,0.5;1,1;]"..
+		
+		"label[9.3,-0.5;Additional storage for dyes:]"..
+		"list[current_name;extrastore;9.3,0;5,9]";
 
    if( minetest.setting_getbool("creative_mode") ) then
       form = form.."label[0.5,0.25;CREATIVE MODE:]".."label[0.5,0.75;no dyes or input consumed]";
@@ -1245,6 +1249,13 @@ colormachine.allow_inventory_access = function(pos, listname, index, stack, play
    -- only specific slots accept input or output
    if(  (mode=="put"  and listname ~= "input" and listname ~= "refill" and listname ~= "dyes" )
      or (mode=="take" and listname ~= "input" and listname ~= "refill" and listname ~= "dyes" and listname ~= "output" and listname ~= "paintless" )) then
+
+      if( listname == "extrastore" ) then
+         local parts = string.split(stack:get_name(),":");
+         if( #parts > 1 and (parts[1]=='unifieddyes' or parts[1]=='dye')) then
+            return stack:get_count();
+         end
+      end
       return 0;
    end
 
@@ -1762,6 +1773,7 @@ minetest.register_node("colormachine:colormachine", {
            inv:set_size("output",   14);  -- output slot for painted blocks - up to 8 alternate coloring schems supported (blox has 8 for stone!)
            inv:set_size("paintless", 1);  -- output slot for blocks with paint scratched off
            inv:set_size("dyes",     18);  -- internal storage for the dye powders
+           inv:set_size("extrastore",5*9); -- additional storage for dyes
 
            --meta:set_string( 'formspec', colormachine.blocktype_menu( meta, 'white' ));
            meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
