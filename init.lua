@@ -326,6 +326,23 @@ end
 myroof_names = nil;
 
 
+
+local mycorner_names = {'wood','stone','stonebrick'}
+for i,v in ipairs( mycorner_names ) do
+	colormachine.data[ 'corners_'..v..'_' ] = {
+		nr= 1.5 + 1/100*i,
+		modname='mycorners',
+		shades={1,0,1,0,0,0,1,0},
+		grey_shades={1,1,1,1,1},
+		u=0,
+		descr="myc"..v,
+		block="mycorners:corner_"..v..'_white',
+		add='corner_'..v..'_',
+		p=1};
+end
+
+
+
 colormachine.ordered = {}
 
 
@@ -484,11 +501,11 @@ colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, p
 
    local translated_color     = colormachine.translate_color_name( meta, k, new_color, c, s, g, 0 );
    if( not( translated_color )) then
-      if( translated_node_name and minetest.registered_nodes[ translated_node_name ] ) then
-          if( minetest.registered_nodes[ translated_node_name ].inventory_image ) then
-             translated_color = minetest.registered_nodes[ translated_node_name ].inventory_image;
-          elseif( minetest.registered_nodes[ translated_node_name ].wield_image ) then
-             translated_color = minetest.registered_nodes[ translated_node_name ].wield_image;
+      if( translated_node_name and minetest.registered_items[ translated_node_name ] ) then
+          if( minetest.registered_items[ translated_node_name ].inventory_image ) then
+             translated_color = minetest.registered_items[ translated_node_name ].inventory_image;
+          elseif( minetest.registered_items[ translated_node_name ].wield_image ) then
+             translated_color = minetest.registered_items[ translated_node_name ].wield_image;
           end
       end
    end
@@ -502,7 +519,7 @@ colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, p
    end
 
    -- a node or craftitem of that name does not exist
-   if(    not( minetest.registered_nodes[      translated_node_name ])
+   if(    not( minetest.registered_items[      translated_node_name ])
       and not( minetest.registered_craftitems[ translated_node_name ])) then
 
 --print("NOT FOUND: "..tostring( translated_node_name ).." image_button["..tostring(pos_x)..","..tostring(pos_y)..";1,1;"..translated_color..";"..tostring(link).."; ]");
@@ -818,7 +835,7 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
    -- another case of special treatment needed; at least the color is given in the tiles 
    if( mod_name =='stained_glass' and stained_glass_exception==1) then 
 
-      local original_node = minetest.registered_nodes[ bname ];
+      local original_node = minetest.registered_items[ bname ];
       if( original_node ~= nil ) then
          local tile   = original_node.tiles[1];
          local liste2 = string.split( tile, "%.");
@@ -838,7 +855,7 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
    -- blox uses its own naming scheme
    if( mod_name =='blox' ) then
       -- the color can be found in the description
-      local original_node = minetest.registered_nodes[ bname ];
+      local original_node = minetest.registered_items[ bname ];
       if( original_node ~= nil ) then
 
          local bloxdescr = original_node.description;
