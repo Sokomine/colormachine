@@ -195,9 +195,9 @@ colormachine.data = {
 
    beds_bed_top_top_         = { nr=13, modname='beds',          shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="beds",   block="beds:bed_white", add="bed_bottom_",p=1},
 
-   lrfurn_armchair_front_    = { nr=14, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="armchair",block="lrfurn:armchair_white", add="armchair_",p=1 },
-   lrfurn_sofa_right_front_  = { nr=15, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="sofa",    block="lrfurn:longsofa_white", add="sofa_right_",p=1 },
-   lrfurn_longsofa_middle_front_= { nr=16, modname='lrfurn',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="longsofa",block="lrfurn:sofa_white", add="longsofa_right_",p=1 },
+   lrfurn_armchair_front_    = { nr=14, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="armchair",block="lrfurn:armchair_white", add="armchair_",p=1, composed=1 },
+   lrfurn_sofa_right_front_  = { nr=15, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="sofa",    block="lrfurn:longsofa_white", add="sofa_right_",p=1, composed=1 },
+   lrfurn_longsofa_middle_front_= { nr=16, modname='lrfurn',     shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="longsofa",block="lrfurn:sofa_white", add="longsofa_right_",p=1, composed=1 },
 
 
    -- grey variants do not seem to exist, even though the textures arethere (perhaps nobody wants a grey flag!)
@@ -228,12 +228,25 @@ colormachine.data = {
    blox_loop_cobble_         = { nr=30.6, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CLBlox",  block="default:cobble", add="loop_cobble",p=4},
    blox_corner_cobble_       = { nr=30.7, modname='blox',        shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,1}, u=0, descr="CCBlox",  block="default:cobble", add="corner_cobble",p=4},
 
-   homedecor_window_shutter_ = { nr=16.1, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16},
-   forniture_armchair_top_   = { nr=16.2, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1},
-   forniture_kitchen_chair_sides_ = {nr=16.3, modname='homedecor',shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="kchair",   block="homedecor:chair", add="chair_",p=1},
-   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_foot", add="bed_",p=1, obj_postfix='_foot'},
-   homedecor_bathroom_tiles_ = {nr=16.5, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="htiles",   block="homedecor:tiles_1", add="tiles_",p=1},
-   homedecor_curtain_        = { nr=16.6, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_"},
+   homedecor_window_shutter_ = { nr=16.1, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16,composed=1},
+   forniture_armchair_top_   = { nr=16.2, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1,composed=1},
+   forniture_kitchen_chair_sides_ = {nr=16.3, modname='homedecor',shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="kchair",   block="homedecor:chair", add="chair_",p=1,composed=1},
+   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_regular", add="bed_",p=1, obj_postfix='_regular',composed=1},
+   homedecor_bathroom_tiles_ = {nr=16.5, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="htiles",   block="homedecor:tiles_1", add="tiles_",p=1,composed=1},
+   homedecor_curtain_        = { nr=16.6, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_",composed=1},
+
+   homedecor_curtain_open_   = { nr=16.61, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="ocurtain", block="homedecor:curtain_open_white", add="curtain_open_", composed=1},
+
+   homedecor_desk_lamp_      = { nr=16,62, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="dlamp",    block="homedecor:desk_lamp_blue", add="desk_lamp_", composed=1},
+   homedecor_table_lamp_     = { nr=16,63, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="tlamp",    block="homedecor:table_lamp_white_off", add="table_lamp_", composed=1, obj_postfix='_off'},
+   homedecor_standing_lamp_  = { nr=16,64, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="slamp",    block="homedecor:standing_lamp_white_off", add="standing_lamp_", composed=1, obj_postfix='_off'},
+
+   lavalamp_                 = { nr=16.644, modname='lavalamp',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="lavalamp", block="lavalamp:blue", add="", composed=1},
+
+   homedecor_table_          = { nr=16,645,modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="htable",   block="homedecor:table", add="table_", composed=1},
+   homedecor_book_           = { nr=16,65, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hbook",    block="default:book", add="book_", composed=1},
+   homedecor_bottle_         = { nr=16,66, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,0}, u=0, descr="hbottle",  block="vessels:glass_bottle", add="bottle_", composed=1},
+   homedecor_welcome_mat_    = { nr=16,67, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hwmat",    block="homedecor:welcome_mat_grey", add="welcome_mat_", composed=1},
 
 
    plasticbox_               = { nr=16.7, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
@@ -420,12 +433,24 @@ end
 
 colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, pos_y, change_link )
 
+
+   local translated_node_name = colormachine.translate_color_name( meta, k, new_color, c, s, g, 1 );
+
    local translated_color     = colormachine.translate_color_name( meta, k, new_color, c, s, g, 0 );
+   if( not( translated_color )) then
+      if( translated_node_name and minetest.registered_nodes[ translated_node_name ] ) then
+          if( minetest.registered_nodes[ translated_node_name ].inventory_image ) then
+             translated_color = minetest.registered_nodes[ translated_node_name ].inventory_image;
+          elseif( minetest.registered_nodes[ translated_node_name ].wield_image ) then
+             translated_color = minetest.registered_nodes[ translated_node_name ].wield_image;
+          end
+      end
+   end
    if( not( translated_color )) then
       return "";
    end
 
-   local translated_node_name = colormachine.translate_color_name( meta, k, new_color, c, s, g, 1 );
+--   local translated_node_name = colormachine.translate_color_name( meta, k, new_color, c, s, g, 1 );
    if( not( translated_node_name )) then
       return "";
    end
@@ -443,7 +468,11 @@ colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, p
       link = k;
    end
 
-   return "image_button["..tostring(pos_x)..","..tostring(pos_y)..";1,1;"..translated_color..";"..tostring(link).."; ]";
+   if( colormachine.data[ k ].composed ) then
+      return "item_image_button["..tostring(pos_x)..","..tostring(pos_y)..";1,1;"..translated_node_name..";"..tostring(link).."; ]";
+   else
+      return "image_button["..tostring(pos_x)..","..tostring(pos_y)..";1,1;"..translated_color..";"..tostring(link).."; ]";
+   end
 end
 
 
@@ -474,6 +503,35 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
         or (g==-1 and s==7 and c==5 ) -- dark brown
         or g==1 or g==3 or g==4 or g==5 )) then
       k = 'dye_';
+   end
+
+   if( k=='homedecor_bathroom_tiles_' and as_obj_name==1 ) then
+      if(     g==1 or new_color==colormachine.grey_names[1]) then
+         return 'homedecor:tiles_1';
+      elseif( g==3 or new_color==colormachine.grey_names[3]) then
+         return 'homedecor:tiles_2';
+      elseif( g==4 or new_color==colormachine.grey_names[4]) then
+         return 'homedecor:tiles_4';
+      elseif( g==5 or new_color==colormachine.grey_names[5]) then
+         return 'homedecor:tiles_3';
+      elseif( new_color == 'dark_orange' ) then
+         return 'homedecor:tiles_tan';
+      end
+   end
+
+   if( (k=='homedecor_book_' or k=='homedecor_bottle_' or k=='homedecor_welcome_mat_' ) and as_obj_name==1) then
+      if( new_color == 'dark_orange' ) then
+          new_color = 'brown';
+         return 'homedecor:'..colormachine.data[k].add..'brown'..(colormachine.data[k].postfix or '');
+      end
+   end
+   
+   if( k=='homedecor_table_' and as_obj_name==1 and new_color=='dark_orange' ) then
+      return 'homedecor:'..colormachine.data[k].add..'mahogany'..(colormachine.data[k].postfix or '');
+   end
+
+   if( k=='homedecor_bed_' and as_obj_name==1 and g==4 ) then
+      return 'homedecor:bed_darkgrey_regular';
    end
 
    -- this does break the namescheme...
