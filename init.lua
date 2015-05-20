@@ -292,7 +292,7 @@ local mydeck_names = {'deck_boards','deck_beam',
 	'stairs','stairsb','stairs_ocorner','stairs_icorner','stairs_railr','stairs_raill','stairs_railr_end','stairs_raill_end'};
 for i,v in ipairs( mydeck_names ) do
 	colormachine.data[ 'mydeck_'..v..'s_' ] = {
-		nr= 1.0 + 1/100*i;
+		nr= 1.0 + 1/100*i,
 		modname='mydeck',
 		shades={1,0,1,0,0,0,1,0},
 		grey_shades={1,1,1,1,1},
@@ -303,6 +303,28 @@ for i,v in ipairs( mydeck_names ) do
 		composed=1,
 		p=1};
 end
+mydeck_names = nil;
+
+
+local myroofs_names = {'', '_bundle', '_icorner','_ocorner',
+		'_round_bundle', '_round_long', '_round_long_icorner', '_round_long_ocorner',
+		'_long', '_long_icorner', '_long_ocorner'};
+for i,v in ipairs( myroofs_names ) do
+	colormachine.data[ 'myroofs'..v..'_' ] = {
+		nr= 2.0 + 1/100*i,
+		modname='myroofs',
+		shades={1,0,1,0,0,0,1,0},
+		grey_shades={1,1,1,1,1},
+		u=0,
+		descr="myr"..tostring(i),
+		block="myroofs:asphalt_shingle_grey"..v,
+		add='asphalt_shingle_',
+		obj_postfix=v,
+		composed=1,
+		p=1};
+end
+myroof_names = nil;
+
 
 colormachine.ordered = {}
 
@@ -540,6 +562,16 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
          return 'homedecor:tiles_3';
       elseif( new_color == 'dark_orange' ) then
          return 'homedecor:tiles_tan';
+      end
+   end
+
+   if( colormachine.data[k].modname=='myroofs' and as_obj_name==1 ) then
+      if( g==5 or new_color == 'black' ) then
+	 return "myroofs:asphalt_shingle_hd_asphalt"..(colormachine.data[k].postfix or '');
+      elseif( new_color=='orange') then
+	 return "myroofs:asphalt_shingle_hd_terracotta"..(colormachine.data[k].postfix or '');
+      elseif( new_color=='dark_orange') then
+	 return "myroofs:asphalt_shingle_hd_wood"..(colormachine.data[k].postfix or '');
       end
    end
 
