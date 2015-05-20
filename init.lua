@@ -237,16 +237,16 @@ colormachine.data = {
 
    homedecor_curtain_open_   = { nr=16.61, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="ocurtain", block="homedecor:curtain_open_white", add="curtain_open_", composed=1},
 
-   homedecor_desk_lamp_      = { nr=16,62, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="dlamp",    block="homedecor:desk_lamp_blue", add="desk_lamp_", composed=1},
-   homedecor_table_lamp_     = { nr=16,63, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="tlamp",    block="homedecor:table_lamp_white_off", add="table_lamp_", composed=1, obj_postfix='_off'},
-   homedecor_standing_lamp_  = { nr=16,64, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="slamp",    block="homedecor:standing_lamp_white_off", add="standing_lamp_", composed=1, obj_postfix='_off'},
+   homedecor_desk_lamp_      = { nr=16.62, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="dlamp",    block="homedecor:desk_lamp_blue", add="desk_lamp_", composed=1},
+   homedecor_table_lamp_     = { nr=16.63, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="tlamp",    block="homedecor:table_lamp_white_off", add="table_lamp_", composed=1, obj_postfix='_off'},
+   homedecor_standing_lamp_  = { nr=16.64, modname='homedecor',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="slamp",    block="homedecor:standing_lamp_white_off", add="standing_lamp_", composed=1, obj_postfix='_off'},
 
    lavalamp_                 = { nr=16.644, modname='lavalamp',    shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="lavalamp", block="lavalamp:blue", add="", composed=1},
 
    homedecor_table_          = { nr=16,645,modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="htable",   block="homedecor:table", add="table_", composed=1},
-   homedecor_book_           = { nr=16,65, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hbook",    block="default:book", add="book_", composed=1},
-   homedecor_bottle_         = { nr=16,66, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,0}, u=0, descr="hbottle",  block="vessels:glass_bottle", add="bottle_", composed=1},
-   homedecor_welcome_mat_    = { nr=16,67, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hwmat",    block="homedecor:welcome_mat_grey", add="welcome_mat_", composed=1},
+   homedecor_book_           = { nr=16.65, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hbook",    block="default:book", add="book_", composed=1},
+   homedecor_bottle_         = { nr=16.66, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,0}, u=0, descr="hbottle",  block="vessels:glass_bottle", add="bottle_", composed=1},
+   homedecor_welcome_mat_    = { nr=16.67, modname='homedecor',    shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,0,0}, u=0, descr="hwmat",    block="homedecor:welcome_mat_grey", add="welcome_mat_", composed=1},
 
 
    plasticbox_               = { nr=16.7, modname='plasticbox',  shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="plastic", block="plasticbox:plasticbox", add="plasticbox_",p=16},
@@ -279,6 +279,30 @@ colormachine.data = {
 --]]
 }
 
+
+
+local mydeck_names = {'deck_boards','deck_beam',
+	'deck_joists','deck_joists_side','deck_joists_end','deck_joists_side_end','deck_joists_endr','deck_joists_side_endr',
+	'beam','beam_wbracket',
+	'joists_beam','joists_beam_wbracket','joists_side_beam','joists_side_beam_wbracket',
+	'deck_joists_beam','deck_joists_beam_wbracket','deck_joists_side_beam','deck_joists_side_beam_wbracket',
+	'joists','joists_side','joists_end','joists_side_end','joists_endr','joists_side_endr',
+	'lattice','pile_wpost','post',
+	'rail','rail_corner','rail_icorner',
+	'stairs','stairsb','stairs_ocorner','stairs_icorner','stairs_railr','stairs_raill','stairs_railr_end','stairs_raill_end'};
+for i,v in ipairs( mydeck_names ) do
+	colormachine.data[ 'mydeck_'..v..'s_' ] = {
+		nr= 1.0 + 1/100*i;
+		modname='mydeck',
+		shades={1,0,1,0,0,0,1,0},
+		grey_shades={1,1,1,1,1},
+		u=0,
+		descr="myd"..tostring(i),
+		block="mydeck:"..v,
+		add=v.."s_",
+		composed=1,
+		p=1};
+end
 
 colormachine.ordered = {}
 
@@ -1115,6 +1139,9 @@ colormachine.main_menu_formspec = function( pos, option )
                local block_name = colormachine.translate_color_name( meta, v, meta:get_string('selected_name'), nil, nil, nil, 1 );
                -- one pigment is enough for factor blocks:
                local factor         = colormachine.data[ v ].p;
+               if( not( factor )) then
+                  factor = 1.0;
+               end
                -- how many of these blocks can we actually paint?
 
                local can_be_painted = 0;
