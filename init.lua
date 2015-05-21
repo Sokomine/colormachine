@@ -328,6 +328,11 @@ myroof_names = nil;
 
 
 local mycorner_names = {'wood','stone','stonebrick'}
+local mycorner_materials = {
+	'default_sandstone','default_clay','default_cobble','default_stone',
+	'default_desert_stone','default_wood','default_pinewood','default_brick',
+	'default_desert_cobble','default_junglewood','default_mossycobble',
+	'default_sandstone_brick','default_desert_stone_brick','default_stone_brick'};
 for i,v in ipairs( mycorner_names ) do
 	colormachine.data[ 'corners_'..v..'_' ] = {
 		nr= 1.5 + 1/100*i,
@@ -339,7 +344,34 @@ for i,v in ipairs( mycorner_names ) do
 		block="mycorners:corner_"..v..'_white',
 		add='corner_'..v..'_',
 		p=1};
+	for j,m in ipairs( mycorner_materials ) do
+		colormachine.data[ 'cornerblock_'..m..'_'..v..'_' ] = {
+			nr= 1.5 + 1/100*i + 1/1000*j,
+			modname='mycorners',
+			shades={1,0,1,0,0,0,1,0},
+			grey_shades={1,1,1,1,1},
+			u=0,
+			descr="myc"..tostring(j)..v,
+			block="mycorners:cornerblock_"..m..'_'..v..'_white',
+			add='cornerblock_'..m..'_'..v..'_',
+			composed=1,
+			p=1};
+	end
 end
+mycorner_materials = nil;
+mycorner_names = nil;
+
+colormachine.data[ 'mymulch_' ] = {
+		nr= 1.0111,
+		modname='mymulch',
+		shades={1,0,1,0,0,0,1,0},
+		grey_shades={1,1,1,1,1},
+		u=0,
+		descr="mymulch",
+		block="mymulch:mulch_tan",
+		add='mulch_',
+		composed=1,
+		p=1};
 
 
 
