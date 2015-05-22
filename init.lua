@@ -287,10 +287,10 @@ colormachine.data = {
    coloredblocks_black_      = { nr=42, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bla", block="coloredblocks:black", add="black_",p=1},
 --]]
 
-  clothing_inv_hat_          = { nr=1.000001, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clhat",   block="clothing:hat_white", add="hat_",p=1},
-  clothing_inv_shirt_        = { nr=1.000002, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clshirt", block="clothing:shirt_white", add="shirt_",p=1},
-  clothing_inv_pants_        = { nr=1.000003, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clpants", block="clothing:pants_white", add="pants_",p=1},
-  clothing_inv_cape_         = { nr=1.000004, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clcape",  block="clothing:cape_white", add="cape_",p=1},
+  clothing_inv_hat_          = { nr=43, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clhat",   block="clothing:hat_white", add="hat_",p=1},
+  clothing_inv_shirt_        = { nr=44, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clshirt", block="clothing:shirt_white", add="shirt_",p=1},
+  clothing_inv_pants_        = { nr=45, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clpants", block="clothing:pants_white", add="pants_",p=1},
+  clothing_inv_cape_         = { nr=46, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clcape",  block="clothing:cape_white", add="cape_",p=1},
 }
 
 
@@ -306,7 +306,7 @@ local mydeck_names = {'deck_boards','deck_beam',
 	'stairs','stairsb','stairs_ocorner','stairs_icorner','stairs_railr','stairs_raill','stairs_railr_end','stairs_raill_end'};
 for i,v in ipairs( mydeck_names ) do
 	colormachine.data[ 'mydeck_'..v..'s_' ] = {
-		nr= 1.0 + 1/100*i,
+		nr= 47.0 + 1/100*i,
 		modname='mydeck',
 		shades={1,0,1,0,0,0,1,0},
 		grey_shades={1,1,1,1,1},
@@ -325,7 +325,7 @@ local myroofs_names = {'', '_bundle', '_icorner','_ocorner',
 		'_long', '_long_icorner', '_long_ocorner'};
 for i,v in ipairs( myroofs_names ) do
 	colormachine.data[ 'myroofs'..v..'_' ] = {
-		nr= 2.0 + 1/100*i,
+		nr= 48.0 + 1/100*i,
 		modname='myroofs',
 		shades={1,0,1,0,0,0,1,0},
 		grey_shades={1,1,1,1,1},
@@ -349,7 +349,7 @@ local mycorner_materials = {
 	'default_sandstone_brick','default_desert_stone_brick','default_stone_brick'};
 for i,v in ipairs( mycorner_names ) do
 	colormachine.data[ 'corners_'..v..'_' ] = {
-		nr= 1.5 + 1/100*i,
+		nr= 49.0 + 1/100*i,
 		modname='mycorners',
 		shades={1,0,1,0,0,0,1,0},
 		grey_shades={1,1,1,1,1},
@@ -360,7 +360,7 @@ for i,v in ipairs( mycorner_names ) do
 		p=1};
 	for j,m in ipairs( mycorner_materials ) do
 		colormachine.data[ 'cornerblock_'..m..'_'..v..'_' ] = {
-			nr= 1.5 + 1/100*i + 1/1000*j,
+			nr= 49.5 + 1/100*i + 1/1000*j,
 			modname='mycorners',
 			shades={1,0,1,0,0,0,1,0},
 			grey_shades={1,1,1,1,1},
@@ -376,7 +376,7 @@ mycorner_materials = nil;
 mycorner_names = nil;
 
 colormachine.data[ 'mymulch_' ] = {
-		nr= 1.0111,
+		nr= 50,
 		modname='mymulch',
 		shades={1,0,1,0,0,0,1,0},
 		grey_shades={1,1,1,1,1},
