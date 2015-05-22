@@ -23,6 +23,14 @@
 -- Version 0.6
 
 -- Changelog: 
+-- 22.05.15 Added support for new homedecor meshnodes.
+--          Added support for nodes that use composed textures (by settig composed=1)
+--          Added support for myroofs: https://forum.minetest.net/viewtopic.php?f=11&t=11416&p=172034
+--          Added support for mydeck: https://forum.minetest.net/viewtopic.php?f=9&t=11729
+--          Added support for mycorners: https://forum.minetest.net/viewtopic.php?f=11&t=11363
+--          Added support for mymulch: https://forum.minetest.net/viewtopic.php?f=9&t=11780
+--          Added support for clothing: https://forum.minetest.net/viewtopic.php?f=9&t=11362&p=179077
+--          Added better handling of diffrent pages for all those blocks in the blocktype menu.
 -- 17.09.14 Added a modified version of Krocks paintroller from his paint_roller mod.
 --          Added additional storage area for dyes (works like a chest for now)
 -- 03.09.14 Added a second block type menu.
@@ -193,7 +201,7 @@ colormachine.data = {
 -- normal dye mod (from minetest_game) - supports as many colors as the wool mod
    dye_                      = { nr=12, modname='dye',           shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="dye",    block="dye:white",      add="", p=1  },
 
-   beds_bed_top_top_         = { nr=13, modname='beds',          shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="beds",   block="beds:bed_white", add="bed_bottom_",p=1},
+--   beds_bed_top_top_         = { nr=13, modname='beds',          shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="beds",   block="beds:bed_white", add="bed_bottom_",p=1},
 
    lrfurn_armchair_front_    = { nr=14, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="armchair",block="lrfurn:armchair_white", add="armchair_",p=1, composed=1 },
    lrfurn_sofa_right_front_  = { nr=15, modname='lrfurn',        shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,1}, u=0, descr="sofa",    block="lrfurn:longsofa_white", add="sofa_right_",p=1, composed=1 },
@@ -231,7 +239,8 @@ colormachine.data = {
    homedecor_window_shutter_ = { nr=16.1, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16,composed=1},
    forniture_armchair_top_   = { nr=16.2, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1,composed=1},
    forniture_kitchen_chair_sides_ = {nr=16.3, modname='homedecor',shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="kchair",   block="homedecor:chair", add="chair_",p=1,composed=1},
-   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_regular", add="bed_",p=1, obj_postfix='_regular',composed=1},
+   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_regular", add="bed_",p=1, obj_postfix='_regular',composed=1, composed=1},
+   homedecor_bed_kingsize_   = {nr=16.45, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbedk",   block="homedecor:bed_darkgrey_kingsize", add="bed_",p=1, obj_postfix='_kingsize',composed=1, composed=1},
    homedecor_bathroom_tiles_ = {nr=16.5, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="htiles",   block="homedecor:tiles_1", add="tiles_",p=1,composed=1},
    homedecor_curtain_        = { nr=16.6, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_",composed=1},
 
@@ -1093,7 +1102,13 @@ end
 
 
 -- if the player has selected a color, show all blocks in that color
-colormachine.blocktype_menu = function( meta, new_color, start_at_offset )
+colormachine.blocktype_menu = function( meta, new_color, page )
+
+   page = tonumber( page );
+   local per_line = 13;
+   local anz_lines = 3;
+   local per_page = anz_lines * per_line;
+   local start_at_offset = per_page * page;
 
    new_color = colormachine.decode_color_name( meta, new_color );
 
@@ -1108,9 +1123,9 @@ colormachine.blocktype_menu = function( meta, new_color, start_at_offset )
    local y = 2;
 
    for i,k in ipairs( colormachine.ordered ) do
-
+ 
       -- only installed mods are of intrest
-      if( k ~= nil and colormachine.data[ k ].installed == 1 and i > start_at_offset and i <= (start_at_offset + 3*13)) then 
+      if( k ~= nil and colormachine.data[ k ].installed == 1 and i > start_at_offset and i <= (start_at_offset + per_page)) then 
 
          -- that particular mod may not offer this color
          form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..colormachine.data[k].descr.."]"..
@@ -1124,21 +1139,32 @@ colormachine.blocktype_menu = function( meta, new_color, start_at_offset )
          end
 
          x = x+1;
-         if( x>13 ) then
+         if( x>per_line ) then
             x = 1;
-            y = y+3;
-            form = form..
-                "label[0.2,"..tostring(y-1)..".2;name]"..
-                "label[0.2,"..tostring(y  )..".2;unpainted]"..
-                "label[0.2,"..tostring(y+1)..".2;colored]";
-            if( y>3 ) then
-                if( start_at_offset == 0 ) then
-                   form = form.."button[9,0.5;4,1;blocktype_menu2;Show further blocks]";
-                else
-                   form = form.."button[9,0.5;4,1;blocktype_menu;Back to first page]";
-                end
+            y = y+anz_lines;
+            if( y < 2+anz_lines*3 ) then
+               form = form..
+                   "label[0.2,"..tostring(y-1)..".2;name]"..
+                   "label[0.2,"..tostring(y  )..".2;unpainted]"..
+                   "label[0.2,"..tostring(y+1)..".2;colored]";
             end
          end
+      end
+   end
+   if( #colormachine.ordered > per_page ) then
+      local max_page_nr = math.ceil( #colormachine.ordered/per_page );
+      -- add page number
+      form = form.."field[20,20;0.1,0.1;page;;"..math.floor( start_at_offset/(3*13) ).."]"..
+		"label[10.2,0.5;"..tostring( page+1 ).."/"..tostring( max_page_nr ).."]";
+      if( page and page>0 ) then
+         form = form..
+		"button[9.0,0.5;0.5,0.5;first_page;"..minetest.formspec_escape("1|<").."]"..
+		"button[9.6,0.5;0.5,0.5;prev_page;"..tostring(page)..minetest.formspec_escape("<").."]";
+      end
+      if( not( page ) or page+1 < max_page_nr ) then
+         form = form..
+		"button[10.8,0.5;0.5,0.5;next_page;"..minetest.formspec_escape(">")..tostring( math.min( page+2, max_page_nr )).."]"..
+		"button[11.4,0.5;0.5,0.5;last_page;"..minetest.formspec_escape(">|")..tostring( max_page_nr ).."]";
       end
    end
    return form;
@@ -1963,6 +1989,11 @@ minetest.register_node("colormachine:colormachine", {
               return 0;
            end
 
+           -- remember the page we where at
+           if( not( fields.page )) then
+              fields.page = 0;
+           end
+
            local meta = minetest.env:get_meta(pos);
            for k,v in pairs( fields ) do
               if( k == 'main_menu' ) then
@@ -1995,7 +2026,9 @@ minetest.register_node("colormachine:colormachine", {
                  meta:set_string( 'formspec', colormachine.get_individual_dye_management_formspec( meta, inv ));
                  return;
               elseif( colormachine.data[ k ] ) then
-                 meta:set_string( 'formspec', colormachine.data[ k ].formspec );
+                 -- remember the page we where at
+                 meta:set_string( 'formspec', colormachine.data[ k ].formspec.. 
+                        "field[20,20;0.1,0.1;page;;"..tostring(fields.page).."]" );
                  return;
               elseif( k=='key_escape') then
                  -- nothing to do
@@ -2011,16 +2044,26 @@ minetest.register_node("colormachine:colormachine", {
                  end
 
                  -- if no input is present, show the block selection menu
-                 if(     k=="blocktype_menu2" ) then
-                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k, 3*13 )); 
-                 elseif( k=="blocktype_menu" or inv:is_empty( "input" )) then
-                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k, 0 )); 
+                 if( k=="blocktype_menu" or inv:is_empty( "input" )
+                   or k=='first_page' or k=='prev_page' or k=='next_page' or k=='last_page') then
+                    if( not( fields.page ) or k=='first_page') then
+                       fields.page = 0;
+                    elseif( k=='prev_page') then
+                       fields.page = math.max(0,fields.page-1);
+                    elseif( k=='next_page') then
+                       fields.page = math.min(fields.page+1, math.ceil(#colormachine.ordered/(3*13)-1));
+                    elseif( k=='last_page') then
+                       fields.page = math.ceil(#colormachine.ordered/(3*13)-1);
+                    end
+                             
+                    meta:set_string( 'formspec', colormachine.blocktype_menu( meta, k, fields.page )); 
 
                  else
 
                     -- else set the selected color and go back to the main menu
                     colormachine.decode_color_name( meta, k );
-                    meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
+                    meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze")..
+                        "field[20,20;0.1,0.1;page;;"..tostring(fields.page).."]" );
                  end
               end
            end
