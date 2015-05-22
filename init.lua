@@ -277,6 +277,11 @@ colormachine.data = {
    coloredblocks_white_      = { nr=41, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_whi", block="coloredblocks:white", add="",p=1},
    coloredblocks_black_      = { nr=42, modname='coloredblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,0,0,1}, u=0, descr="cb_bla", block="coloredblocks:black", add="black_",p=1},
 --]]
+
+  clothing_inv_hat_          = { nr=1.000001, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clhat",   block="clothing:hat_white", add="hat_",p=1},
+  clothing_inv_shirt_        = { nr=1.000002, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clshirt", block="clothing:shirt_white", add="shirt_",p=1},
+  clothing_inv_pants_        = { nr=1.000003, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clpants", block="clothing:pants_white", add="pants_",p=1},
+  clothing_inv_cape_         = { nr=1.000004, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clcape",  block="clothing:cape_white", add="cape_",p=1},
 }
 
 

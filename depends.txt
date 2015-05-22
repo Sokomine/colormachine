@@ -20,3 +20,4 @@ myroof?
 mydeck?
 mycorners?
 mymulch?
+clothing?
