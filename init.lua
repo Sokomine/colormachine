@@ -23,6 +23,8 @@
 -- Version 0.6
 
 -- Changelog: 
+-- 23.05.15 As all dyes can be crafted into other dyes, only white dye is consumed - provided the
+--          other dyes needed for the crafting chain are stored.
 -- 22.05.15 Added support for new homedecor meshnodes.
 --          Added support for nodes that use composed textures (by settig composed=1)
 --          Added support for myroofs: https://forum.minetest.net/viewtopic.php?f=11&t=11416&p=172034
@@ -1065,9 +1067,6 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
 
    -- identify the block type/subname
    local add       = "";
---   if( not( blocktype ) or blocktype == '' ) then
---      blocktype = found[1];
---   end
 
    if( curr_index > 0 ) then
 
@@ -1081,6 +1080,10 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
             curr_index = curr_index - 1;
          end
       end
+   end
+
+   if( not( blocktype ) or blocktype == '' ) then
+      blocktype = found[1];
    end
 
    if( curr_index > 0 and #liste>0 and liste[1]=='chair' and blocktype == 'homedecor_bed_' ) then
@@ -1677,13 +1680,23 @@ colormachine.calc_dyes_needed = function( meta, inv, amount_needed, do_consume )
       end
    end
 
+   local need_white = math.ceil( amount_needed / anz_pigments );
+   -- the machine does have the required colors stored
+   if( n > 0 ) then
+      local stack_white= inv:get_stack( "dyes", 13 );
+      local anz_white  = stack_white:get_count();
+
+      n = math.min( anz_white, need_white );
+   end
+        
  
    -- return how many *could* be colored
    if( amount_needed > 0 and do_consume ~= 1 ) then
       return n*anz_pigments;
    end
 
-
+   needed = {};
+   needed[ "white" ] = n;
 
    for i,v in ipairs( colormachine.colors_and_greys ) do
 
@@ -1705,7 +1718,11 @@ colormachine.calc_dyes_needed = function( meta, inv, amount_needed, do_consume )
             local stack = inv:get_stack( "dyes", i );
             local found = stack:get_count();
             --print( ' CONSUMED '..math.floor( n * needed[ v ] )..' of '..tostring( stack:get_name())); 
-            inv:set_stack( "dyes", i, stack:get_name()..' '..tostring( found - math.floor( n * needed[ v ] ))); 
+            if( found > math.floor( n * needed[ v ] )) then
+               inv:set_stack( "dyes", i, stack:get_name()..' '..tostring( math.max( 1, found - math.floor( n * needed[ v ] )))); 
+            else
+               inv:set_stack( "dyes", i, "" );
+            end
          end
       end
    end
@@ -2046,6 +2063,10 @@ minetest.register_node("colormachine:colormachine", {
                  for i,f in ipairs( colormachine.colors_and_greys ) do
                     if( k==("mix_"..f )) then
                        colormachine.mix_colors( inv, i, sender );
+
+                       local inv = meta:get_inventory();
+                       meta:set_string( 'formspec', colormachine.get_individual_dye_management_formspec( meta, inv ));
+
                        return; -- formspec remains the dye-management one
                     end
                  end
