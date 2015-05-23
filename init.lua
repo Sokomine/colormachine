@@ -162,8 +162,8 @@ colormachine.data = {
    -- the multicolored bricks come in fewer intensities (only 3 shades) and support only 3 insted of 5 shades of grey
    unifiedbricks_multicolor_ = { nr=6,  modname='unifiedbricks', shades={1,0,0,0,1,0,1,0}, grey_shades={0,1,1,1,0}, u=1, descr="mbrick", block="default:brick", add="multicolor_",p=1},
 
-   hardenedclay_             = { nr=3.5, modname='hardenedclay', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="hclay",  block="hardenedclay:hardened_clay_white", add="hardened_clay_", obj_postfix='',p=16},
-   colouredstonebricks_      = { nr=3.6, modname='colouredstonebricks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="cbrick",  block="default:stonebrick", add="", obj_postfix='',p=1},
+   hardenedclay_             = { nr=3.5, modname='hardenedclay', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="hclay",  block="hardenedclay:hardened_clay_white", add="hardened_clay_", p=16},
+   colouredstonebricks_      = { nr=3.6, modname='colouredstonebricks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="cbrick",  block="default:stonebrick", add="", p=1},
    
    clstone_stone_            = { nr=3.7, modname='clstone',       shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clstone",block="default:stone", add="", p=1, obj_postfix='_stone' },
 
@@ -239,8 +239,8 @@ colormachine.data = {
    homedecor_window_shutter_ = { nr=16.1, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="homedec",  block="homedecor:shutter_oak", add="shutter_",p=16,composed=1},
    forniture_armchair_top_   = { nr=16.2, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="armchair", block="homedecor:armchair_black", add="armchair_",p=1,composed=1},
    forniture_kitchen_chair_sides_ = {nr=16.3, modname='homedecor',shades={1,0,1,0,0,0,1,0}, grey_shades={0,0,0,0,1}, u=0, descr="kchair",   block="homedecor:chair", add="chair_",p=1,composed=1},
-   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_regular", add="bed_",p=1, obj_postfix='_regular',composed=1, composed=1},
-   homedecor_bed_kingsize_   = {nr=16.45, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbedk",   block="homedecor:bed_darkgrey_kingsize", add="bed_",p=1, obj_postfix='_kingsize',composed=1, composed=1},
+   homedecor_bed_            = {nr=16.4, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbed",     block="homedecor:bed_darkgrey_regular", add="bed_",p=1, obj_postfix='_regular', composed=1},
+   homedecor_bed_kingsize_   = {nr=16.45, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="hbedk",   block="homedecor:bed_darkgrey_kingsize", add="bed_",p=1, obj_postfix='_kingsize', composed=1},
    homedecor_bathroom_tiles_ = {nr=16.5, modname='homedecor',     shades={1,0,1,0,0,0,1,0}, grey_shades={1,1,1,1,1}, u=0, descr="htiles",   block="homedecor:tiles_1", add="tiles_",p=1,composed=1},
    homedecor_curtain_        = { nr=16.6, modname='homedecor',     shades={1,0,1,0,0,0,0,0}, grey_shades={1,0,0,0,0}, u=0, descr="curtain",  block="homedecor:curtain_white", add="curtain_",composed=1},
 
@@ -305,7 +305,7 @@ local mydeck_names = {'deck_boards','deck_beam',
 	'rail','rail_corner','rail_icorner',
 	'stairs','stairsb','stairs_ocorner','stairs_icorner','stairs_railr','stairs_raill','stairs_railr_end','stairs_raill_end'};
 for i,v in ipairs( mydeck_names ) do
-	colormachine.data[ 'mydeck_'..v..'s_' ] = {
+	colormachine.data[ v..'s_' ] = {
 		nr= 47.0 + 1/100*i,
 		modname='mydeck',
 		shades={1,0,1,0,0,0,1,0},
@@ -1065,10 +1065,9 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
 
    -- identify the block type/subname
    local add       = "";
-   if( not( blocktype ) or blocktype == '' ) then
-
-      blocktype = found[1];
-   end
+--   if( not( blocktype ) or blocktype == '' ) then
+--      blocktype = found[1];
+--   end
 
    if( curr_index > 0 ) then
 
@@ -1091,7 +1090,15 @@ colormachine.get_color_from_blockname = function( mod_name, block_name )
    end
 
    if( curr_index > 0 ) then
-      print( 'colormachine: ERROR: leftover name parts for '..tostring( bname )..": "..minetest.serialize( liste ));
+      local k_help = '';
+      for i=1, curr_index do
+         k_help = k_help..liste[i]..'_';
+      end
+      if( colormachine.data[ k_help ]) then
+         blocktype = k_help;
+      else
+         print( 'colormachine: ERROR: leftover name parts for '..tostring( bname )..": "..minetest.serialize( liste ));
+      end
    end
 
    return { error_code = nil,
