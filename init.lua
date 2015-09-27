@@ -23,6 +23,7 @@
 -- Version 0.6
 
 -- Changelog: 
+-- 28.09.15 Added support for cblocks: https://forum.minetest.net/viewtopic.php?f=9&t=13303&view=unread#p192497
 -- 23.05.15 As all dyes can be crafted into other dyes, only white dye is consumed - provided the
 --          other dyes needed for the crafting chain are stored.
 -- 22.05.15 Added support for new homedecor meshnodes.
@@ -293,8 +294,10 @@ colormachine.data = {
   clothing_inv_shirt_        = { nr=44, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clshirt", block="clothing:shirt_white", add="shirt_",p=1},
   clothing_inv_pants_        = { nr=45, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clpants", block="clothing:pants_white", add="pants_",p=1},
   clothing_inv_cape_         = { nr=46, modname='clothing', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="clcape",  block="clothing:cape_white", add="cape_",p=1},
-}
 
+  cblocks_wood_              = { nr=2.01,modname='cblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="cblwo", block="default:wood",       add="wood_",p=1, composed=1},
+  cblocks_stonebrick_        = { nr=2.02,modname='cblocks', shades={1,0,1,0,0,0,1,0}, grey_shades={1,0,1,1,1}, u=0, descr="cblsb", block="default:stonebrick", add="stonebrick_",p=1, composed=1},
+}
 
 
 local mydeck_names = {'deck_boards','deck_beam',
