@@ -77,13 +77,14 @@ colormachine.colors = {
         "yellow",
         "lime",
         "green",
-        "aqua",
+        "spring", -- old name: "aqua",
         "cyan",
-        "skyblue",
+        "azure", -- old: "skyblue",
         "blue",
         "violet",
         "magenta",
-        "redviolet"
+        "rose" -- old: "redviolet"
+-- TODO: what about nodes with the old names? aqua -> spring, skyblue -> azure, and redviolet -> rose aliases
 }
 
 
@@ -93,8 +94,8 @@ local stained_glass_exception = 0;
 -- the names of suitable sources of that color (note: this does not work by group!);
 -- you can add your own color sources here if you want
 colormachine.basic_dye_sources  = { "flowers:rose",      "flowers:tulip",         "flowers:dandelion_yellow", 
-                                    "",                  "default:cactus",        "",  "",  "", -- no lime, no aqua, no cyan, no skyblue
-                                    "flowers:geranium",  "flowers:viola",         "",  "",      -- no magenta, no redviolet
+                                    "",                  "default:cactus",        "",  "",  "", -- no lime, no spring, no cyan, no azure
+                                    "flowers:geranium",  "flowers:viola",         "",  "",      -- no magenta, no rose
                                     "default:clay_lump", "", "", "", "default:coal_lump" };
 
 -- if flowers is not installed
@@ -111,13 +112,13 @@ colormachine.dye_mixes          = { red       = {},      -- base color
                                     yellow    = {},      -- base color
                                     lime      = {3,5},   -- yellow + green
                                     green     = {3,9},   -- yellow + blue
-                                    aqua      = {5,7},   -- green + cyan
+                                    spring    = {5,7},   -- green + cyan
                                     cyan      = {5,9},   -- green + blue
-                                    skyblue   = {7,9},   -- cyan + blue
+                                    azure     = {7,9},   -- cyan + blue
                                     blue      = {},      -- base color
                                     violet    = {9,11},  -- blue + magenta
                                     magenta   = {9,1},   -- blue + red
-                                    redviolet = {11,1},  -- magenta + red
+                                    rose      = {11,1},  -- magenta + red
 
                                     white     = {},      -- base color
                                     lightgrey = {13,15},   -- white + grey
@@ -740,7 +741,7 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
          if( g>0 ) then
             return nil; -- no grey values for them
          end
-         local h_trans = {yellow=1, lime=2, green=3, aqua=4, cyan=5, skyblue=6, blue=7, violet=8, magenta=9, redviolet=10, red=11,orange=12};
+         local h_trans = {yellow=1, lime=2, green=3, spring=4, cyan=5, azure=6, blue=7, violet=8, magenta=9, rose=10, red=11,orange=12, aqua=4, skyblue=6, redviolet=10};
       
          local h = h_trans[ colormachine.colors[c] ];
 
@@ -878,7 +879,7 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
          return prefix..new_color..postfix;
       elseif( new_color == 'light_red'   ) then
          return prefix..'pink'..postfix;
-      -- lime, aqua, skyblue and redviolet do not exist as standard wool/dye colors
+      -- lime, spring, azure and rose do not exist as standard wool/dye colors
       elseif( g == -1 and (c==4 or c==6 or c==8 or c==12) and k_orig ~= 'unifieddyes_') then 
          return nil;
       -- all other colors of normal dye/wool exist only in normal shade
@@ -1906,7 +1907,9 @@ colormachine.init = function()
             form = form.."item_image["..tostring(i)..",1;1,1;"..source.."]";
 
             -- even those colors may be additionally mixed
-            if(  #colormachine.dye_mixes[         colormachine.colors_and_greys[ i ] ] == 2 ) then 
+	if(    colormachine.colors_and_greys[ i ]
+	  and  colormachine.dye_mixes[         colormachine.colors_and_greys[ i ] ]
+          and #colormachine.dye_mixes[         colormachine.colors_and_greys[ i ] ] == 2 ) then
                form = form.. "button["..tostring(i-0.1)..",1.9;0.8,0.2;mix_"..colormachine.colors_and_greys[ i ]..";mix]";
             end
 
