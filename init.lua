@@ -1866,24 +1866,24 @@ colormachine.init = function()
    end
 
    local form = "size[14,10]"..
-                "list[current_player;main;1,5;8,4;]"..
+                "list[current_player;main;1,5.2;8,4;]"..
                 "label[1,0.2;"..minetest.formspec_escape('Insert dye sources here -->').."]"..
                 "list[current_name;refill;4,0;1,1;]"..
                 "label[6,0.2;Selected color:]"..
                 "label[0.1,1;sources:]"..
                 "label[0.1,2;dyes:]"..
                 "label[0.1,3;storage:]"..
-                "button[1,4;4,1;main_menu;Back to main menu]"..
-                "button[5,4;4,1;blocktype_menu;Show supported blocks]"..
+                "button[1,4.2;4,1;main_menu;Back to main menu]"..
+                "button[5,4.2;4,1;blocktype_menu;Show supported blocks]"..
                 "list[current_name;dyes;1,3;"..tostring(#colormachine.colors)..",1;]"..  -- normal colors
 
                 -- remaining fields of the dyes inventory: grey colors, arranged vertically
                 -- (not enough space for the "dyes" label)
                 "label[0.1,0.6;need:]"..
-                "label[9.3,4.5;need:]"..
-                "label[10,4.5;sources:]"..
-                "label[12,4.5;storage:]"..
-                "list[current_name;dyes;12,5;1,"..tostring(#colormachine.grey_names)..";"..tostring(#colormachine.colors).."]";
+                "label[9.3,4.7;need:]"..
+                "label[10,4.7;sources:]"..
+                "label[12,4.7;storage:]"..
+                "list[current_name;dyes;12,5.2;1,"..tostring(#colormachine.grey_names)..";"..tostring(#colormachine.colors).."]";
 
    local needed = {};
 
@@ -1924,7 +1924,7 @@ colormachine.init = function()
          end
       
          form = form.. "item_image["..tostring(i)..",2;1,1;"..tostring( prefix..colormachine.colors[ i ] ).."]"..
-                            "label["..tostring(i)..",3.6;"  ..tostring( colormachine.colors_and_greys[ i ] ).."]";
+                            "label["..tostring(i)..",3.8;"  ..tostring( colormachine.colors_and_greys[ i ] ).."]";
       else
          form = form.."label["..tostring(i+0.2)..",3;n/a]";
       end
