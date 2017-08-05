@@ -22,9 +22,9 @@ minetest.register_tool("colormachine:paint_roller", {
 		local stack = inv:get_stack("main", idx) --dye
 		local stack_name = stack:get_name()
 
-		local res           = colormachine.get_node_name_painted( node_name, stack_name );
+		local res           = colormachine.get_node_name_painted( node_name, stack_name, node.param2 );
 
-		if( not( res) or not( res.possible  ) or #res.possible < 1 or (#res.possible==1 and res.possible[1]==node_name)) then
+		if( not( res) or not( res.possible  ) or #res.possible < 1 or (#res.possible==1 and res.possible[1]==node_name and node.param2==res.param2)) then
 			return;
 		end
 		local index = 1;
@@ -45,7 +45,7 @@ minetest.register_tool("colormachine:paint_roller", {
 		end
 
 		-- paint the node
-		minetest.set_node(pointed_thing.under, {name=res.possible[ index ], param2=node.param2})
+		minetest.set_node(pointed_thing.under, {name=res.possible[ index ], param2=res.param2})
 
 		--itemstack:add_wear( 65535 / 30 );
 		return itemstack

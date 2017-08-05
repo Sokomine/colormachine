@@ -1395,7 +1395,101 @@ end
 
 
 -- returns a list of all blocks that can be created by applying dye_node_name to the basic node of old_node_name
-colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
+colormachine.get_node_name_painted = function( old_node_name, dye_node_name, param2 )
+	-- do we have a node that can be colored through setting param2?
+	local def = minetest.registered_nodes[ old_node_name ];
+	if( def and def.paramtype2 ) then
+		local color = nil;
+		local anz_color = 0;
+		if(     def.paramtype2 == "color" ) then
+			-- 256 colors available
+			color = param2;
+			anz_color = 256;
+		elseif( def.paramtype2 == "colorwallmounted") then
+			-- 32 colors (5 bit)
+			color = math.floor(( param2 - (param2%8))/8);
+			anz_color = 32;
+		elseif( def.paramtype2 == "colorfacedir" ) then
+			-- 8 colors (3 bit)
+			color = math.floor(( param2 - (param2%32))/32);
+			anz_color = 8;
+		else
+			color = nil;
+		end
+
+
+		-- use normal dyes for nodes using colorfacedir_palette
+		if( def.palette and def.palette == "colorfacedir_palette.png" and def.paramtype2=="colorfacedir") then
+			local c_names = {"white", "red", "orange", "yellow", "green", "blue", "grey", "magenta"};
+			local old_dye_name = "dye:"..c_names[ color+1 ];
+			new_param2 = param2 % 32;
+			for i,v in ipairs( c_names ) do
+				if( dye_node_name == "dye:"..v ) then
+					new_param2 = new_param2 + (i-1)*32;
+				end
+			end
+			return { possible={old_node_name}, old_dye = old_dye_name, param2 = new_param2 };
+		end
+
+		if( def.palette and def.palette == "unifieddyes_palette_colorwallmounted.png" and anz_color==32) then
+			local dnr = {};
+			dnr[ "dye:white"     ] =  0;
+			dnr[ "dye:red"       ] =  8;
+			dnr[ "dye:orange"    ] =  9;
+			dnr[ "dye:yellow"    ] = 10;
+			dnr[ "dye:green"     ] = 27;
+			dnr[ "dye:blue"      ] = 29;
+			dnr[ "dye:grey"      ] =  2;
+			dnr[ "dye:magenta"   ] = 16;
+			-- we have some dyes left (standard: 15 dyes)
+			dnr[ "dye:black"     ] =  4;
+			dnr[ "dye:brown"     ] = 25;
+			dnr[ "dye:cyan"      ] = 20;
+			-- dark green is darker than normal green; necessary because
+			-- the colors ought to be the same as for the 8-color-palette
+			dnr[ "dye:dark_green"] = 19;
+			dnr[ "dye:dark_grey" ] =  3;
+			dnr[ "dye:pink"      ] =  7;
+			dnr[ "dye:violet"    ] = 22;
+			local old_dye_name = nil;
+			new_param2 = param2 % 8;
+			for k,v in pairs( dnr ) do
+				if( dye_node_name == k ) then
+					new_param2 = new_param2 + v*8;
+				end
+				if( v == color ) then
+					old_dye_name = k;
+				end
+			end
+			-- the color cannot be translated to the 15-color-palette from the dye mod
+			if( not( old_dye_name )) then
+				return;
+			end
+		end
+
+--[[
+		if( def.palette ) then
+			local palette_type = "-unknown-";
+			if(     def.palette == "unifieddyes_palette.png") then
+				palette_type = false;
+			elseif( def.palette == "unifieddyes_palette_colorwallmounted.png") then
+				palette_type = "wallmounted";
+			elseif( def.palette == "unifieddyes_palette_extended.png") then
+				palette_type = "extended";
+			end
+
+			if( false ) then --TODO
+				local hue, sat, val = unifieddyes.get_hsv( dye_node_name );
+				local paletteidx, hue = unifieddyes.getpaletteidx(lastdye, palette_type)
+			end
+		end
+--]]
+		if( color and anz_color>0) then
+			return { possible={old_node_name}, old_dye = dye_node_name, param2 = new_param2 };
+		end
+	end
+
+	-- classical nodes that have diffrent nodes for each color
 	local possible_blocks = {};
 	local unpainted_block = "";
 	local old_dye         = "";
@@ -1439,7 +1533,7 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 
 	-- remove paint
 	if( not( dye_node_name ) or dye_node_name == "") then
-		return {possible={unpainted_block},old_dye = old_dye};
+		return {possible={unpainted_block},old_dye = old_dye, param2 = param2};
 	end
 
 	-- decode dye name
@@ -1469,7 +1563,7 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name )
 	if( #found < 1 ) then
 		return;
 	end
-	return { possible=found, old_dye = old_dye };
+	return { possible=found, old_dye = old_dye, param2 = param2 };
 end
 
 
