@@ -1394,6 +1394,50 @@ colormachine.main_menu_formspec = function( pos, option )
 end
 
 
+local dye_palette_nr = {};
+-- dye name       { colorfacedir_palette.png, unifieddyes_palette_colorwallmounted.png}
+dye_palette_nr[ "dye:white"     ] = { 0,  0};
+dye_palette_nr[ "dye:red"       ] = { 1,  8};
+dye_palette_nr[ "dye:orange"    ] = { 2,  9};
+dye_palette_nr[ "dye:yellow"    ] = { 3, 10};
+dye_palette_nr[ "dye:green"     ] = { 4, 27};
+dye_palette_nr[ "dye:blue"      ] = { 5, 29};
+dye_palette_nr[ "dye:grey"      ] = { 6,  2};
+dye_palette_nr[ "dye:magenta"   ] = { 7, 16};
+-- we have some dyes left (standard: 15 dyes)
+dye_palette_nr[ "dye:black"     ] = {-1,  4};
+dye_palette_nr[ "dye:brown"     ] = {-1, 25};
+dye_palette_nr[ "dye:cyan"      ] = {-1, 20};
+-- dark green is darker than normal green; necessary because
+-- the colors ought to be the same as for the 8-color-palette
+dye_palette_nr[ "dye:dark_green"] = {-1, 19};
+dye_palette_nr[ "dye:dark_grey" ] = {-1,  3};
+dye_palette_nr[ "dye:pink"      ] = {-1,  7};
+dye_palette_nr[ "dye:violet"    ] = {-1, 22};
+
+
+-- determines the name of the dye that was used to create the current param2 value;
+-- transforms param2 to the value as suitable if dye dye_node_name is applied;
+-- old_node_name is just passed on
+colormachine.identify_color_by_param2_and_palette = function( dye_node_name, param2, faktor, palette_index, old_node_name )
+	local old_dye_name = nil;
+	local color = math.floor(( param2 - (param2%faktor))/faktor);
+	local new_param2 = param2;
+	for k,v in pairs( dye_palette_nr ) do
+		-- find out the name of the old dye that had been used
+		if( v[ palette_index ] == color ) then
+			old_dye_name = k;
+		end
+		-- adjust param2 to the new color
+		if( dye_node_name == k and v[ palette_index ]>-1) then
+			new_param2 = (new_param2%faktor) + (v[ palette_index ]*faktor);
+		end
+	end
+	-- the color can be translated to the color-palette from the dye mod
+	return { possible={old_node_name}, old_dye = old_dye_name, param2 = new_param2 };
+end
+
+
 -- returns a list of all blocks that can be created by applying dye_node_name to the basic node of old_node_name
 colormachine.get_node_name_painted = function( old_node_name, dye_node_name, param2 )
 	-- do we have a node that can be colored through setting param2?
@@ -1420,51 +1464,11 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name, par
 
 		-- use normal dyes for nodes using colorfacedir_palette
 		if( def.palette and def.palette == "colorfacedir_palette.png" and def.paramtype2=="colorfacedir") then
-			local c_names = {"white", "red", "orange", "yellow", "green", "blue", "grey", "magenta"};
-			local old_dye_name = "dye:"..c_names[ color+1 ];
-			new_param2 = param2 % 32;
-			for i,v in ipairs( c_names ) do
-				if( dye_node_name == "dye:"..v ) then
-					new_param2 = new_param2 + (i-1)*32;
-				end
-			end
-			return { possible={old_node_name}, old_dye = old_dye_name, param2 = new_param2 };
+			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2,32, 1, old_node_name );
 		end
 
 		if( def.palette and def.palette == "unifieddyes_palette_colorwallmounted.png" and anz_color==32) then
-			local dnr = {};
-			dnr[ "dye:white"     ] =  0;
-			dnr[ "dye:red"       ] =  8;
-			dnr[ "dye:orange"    ] =  9;
-			dnr[ "dye:yellow"    ] = 10;
-			dnr[ "dye:green"     ] = 27;
-			dnr[ "dye:blue"      ] = 29;
-			dnr[ "dye:grey"      ] =  2;
-			dnr[ "dye:magenta"   ] = 16;
-			-- we have some dyes left (standard: 15 dyes)
-			dnr[ "dye:black"     ] =  4;
-			dnr[ "dye:brown"     ] = 25;
-			dnr[ "dye:cyan"      ] = 20;
-			-- dark green is darker than normal green; necessary because
-			-- the colors ought to be the same as for the 8-color-palette
-			dnr[ "dye:dark_green"] = 19;
-			dnr[ "dye:dark_grey" ] =  3;
-			dnr[ "dye:pink"      ] =  7;
-			dnr[ "dye:violet"    ] = 22;
-			local old_dye_name = nil;
-			new_param2 = param2 % 8;
-			for k,v in pairs( dnr ) do
-				if( dye_node_name == k ) then
-					new_param2 = new_param2 + v*8;
-				end
-				if( v == color ) then
-					old_dye_name = k;
-				end
-			end
-			-- the color cannot be translated to the 15-color-palette from the dye mod
-			if( not( old_dye_name )) then
-				return;
-			end
+			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2, 8, 2, old_node_name );
 		end
 
 --[[
