@@ -1,5 +1,9 @@
 -- This is based upon the paint_roller mod by Krock.
 
+-- if the old color of the block can be identified and is supported, its
+-- corresponding dye is added to the player's inventory;
+-- if at all possible, the block is colored with the dye that is found in
+-- the player's inventory to the right of the paintroller
 minetest.register_tool("colormachine:paint_roller", {
 	description = "Paint roller",
 	inventory_image = "paint_roller.png",
