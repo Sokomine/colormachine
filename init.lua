@@ -156,6 +156,7 @@ end
 --   block:       unpainted basic block
 --   add:         item names are formed by <modname>:<add><colorname> (with colorname beeing variable)
 --                names for the textures are formed by <index><colorname><png> mostly (see colormachine.translate_color_name(..))
+--   p:           amount of blocks colored with one piece of dye
 
 colormachine.data = {
 -- the dyes as such
@@ -431,8 +432,8 @@ colormachine.ordered = {}
 colormachine.generate_form = function( m_prefix )
 
    local form = "size["..tostring( #colormachine.colors+2 )..",10]".."label[5,0;Select a color:]"..
-         "label[5,8.2;Select a color or]"..
-         "button[7,8.2;2,1;abort;abort selection]"..
+         "label[5,9.7;Select a color or]"..
+         "button[7,9.5;2,1;abort;abort selection]"..
          "label[0.3,1;light]";
 
    -- not all mods offer all shades (and some offer even more)
@@ -448,6 +449,25 @@ colormachine.generate_form = function( m_prefix )
          "label[0.3,3;normal]"..
          "label[0.3,5;medium]"..
          "label[0.3,7;dark]";
+   end
+
+   -- stair nodes and the like would be just too many nodes to show in the menu; therefore, each
+   -- combination of texture, palette and paramtype2 gets just one entry with alternate blocks
+   -- beeing listed on the menu page
+   if( colormachine.data[ m_prefix ].similar_blocks and #colormachine.data[ m_prefix ].similar_blocks > 1 ) then
+      form = form.."label[1,8.1;Similar blocks using the same texture and colors:]";
+      -- show each alternate block (usually diffrent shapes, i.e. stairs) as a button because that looks best
+      -- (not that the button does much except go back)
+      for i,block in ipairs( colormachine.data[ m_prefix ].similar_blocks ) do
+         if( i<14) then
+              form = form.."item_image_button["..tostring(i)..",8.5;1,1;"..block..";"..minetest.formspec_escape(block)..";]";
+         end
+      end
+      -- this can happen if i.e. unifieddyes and moreblocks meet
+      if( #colormachine.data[ m_prefix ].similar_blocks >13) then
+         form = form.."label[10.3,8.1;"..minetest.formspec_escape("..plus "..
+		tostring( #colormachine.data[ m_prefix ].similar_blocks-13 ).." more not shown here.").."]";
+      end
    end
 
    for x,basecolor in ipairs( colormachine.colors ) do
@@ -620,6 +640,19 @@ colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, p
 end
 
 
+
+colormachine.color_palette_colorfacedir_palette = {
+	"ffffff", -- 1 white
+	"8b0000", -- 2 red
+	"ffa500", -- 3 orange
+	"eeee00", -- 4 yellow
+	"006400", -- 5 green
+	"00008b", -- 6 blue
+	"808080", -- 7 grey
+	"ff1493", -- 8 magenta
+}
+
+
 -- returns the translated name of the color if necessary (wool/normal dye is named differently than unifieddyes);
 -- either meta or c, s and g together need to be given
 -- mode==0: return texture name
@@ -637,6 +670,51 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
    if(  ( g >   0 and colormachine.data[k].grey_shades[ g ] ~= 1 )
      or ( g == -1 and colormachine.data[k].shades[      s ] ~= 1 )) then
       return nil;
+   end
+
+   -- use hardwarecoloring
+   if( colormachine.data[k].palette ) then
+
+      if( colormachine.data[k].palette == "colorfacedir_palette.png" ) then
+         -- no lime, spring, cyan, azure, violet or rose
+         if( (c==4 or c==6 or c==7 or c==8 or c==10 or c==12 )
+           -- no lightgrey, darkgrey or black (only white and grey)
+           or (g==2 or g==4 or g==5 )
+           -- no other saturation than normal
+           or (g==-1 and s~=3 )) then
+            return nil;
+         end
+
+         -- there is just one block; coloring works through param2/itemstack data
+         if( as_obj_name==1 ) then
+            return colormachine.data[k].block;
+         end
+
+         local palette_idx = nil;
+         if( g==1 ) then
+            palette_idx = 1; -- white
+         elseif( c==1 ) then
+            palette_idx = 2; -- red
+         elseif( c==2 ) then
+            palette_idx = 3; -- orange
+         elseif( c==3 ) then
+            palette_idx = 4; -- yellow
+         elseif( c==5 ) then
+            palette_idx = 5; -- green
+         elseif( c==9 ) then
+            palette_idx = 6; -- blue
+         elseif( g==3 ) then
+            palette_idx = 7; -- grey
+         elseif( c==11) then
+            palette_idx = 8; -- magenta
+         else
+            return nil;
+         end
+         -- formspec_escape is required here
+         return minetest.formspec_escape(
+		colormachine.data[k].texture_name.."^[colorize:#"..
+		colormachine.color_palette_colorfacedir_palette[ palette_idx ]..":128");
+      end
    end
 
    local k_orig = k;
@@ -1173,8 +1251,15 @@ colormachine.blocktype_menu = function( meta, new_color, page )
       -- only installed mods are of intrest
       if( k ~= nil and colormachine.data[ k ].installed == 1 and i > start_at_offset and i <= (start_at_offset + per_page)) then 
 
+         -- if there are diffrent shapes (i.e. stairs, moreblock nodes, xconnected etc.), show the number
+         -- of shapes using this texture, palette, paramtype2 combination (i.e. [3] for 3 shapes)
+         local descr = colormachine.data[k].descr;
+         if( colormachine.data[ k ].similar_blocks and #colormachine.data[ k ].similar_blocks > 1 ) then
+            descr = minetest.formspec_escape("["..tostring( #colormachine.data[ k ].similar_blocks ).."]");
+         end
+
          -- that particular mod may not offer this color
-         form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..colormachine.data[k].descr.."]"..
+         form = form.."button["..tostring(x)..","..tostring(y-0.8)..  ";1,1;"..k..";"..descr.."]"..
                   "item_image["..tostring(x)..","..tostring(y    )..";1,1;"..colormachine.data[k].block.."]"; 
 
          local button = colormachine.print_color_image( meta, k, new_color, nil, nil, nil, tostring(x), tostring(y+1), 1);-- translated_color as return value for button
@@ -1415,6 +1500,11 @@ dye_palette_nr[ "dye:dark_grey" ] = {-1,  3};
 dye_palette_nr[ "dye:pink"      ] = {-1,  7};
 dye_palette_nr[ "dye:violet"    ] = {-1, 22};
 
+-- dye numbers left uncovered in the colorwallmounted palette:
+--    1           5  6
+--   11 12 13 14 15    17 18
+--   21    23 24    26    28
+--30 31
 
 -- determines the name of the dye that was used to create the current param2 value;
 -- transforms param2 to the value as suitable if dye dye_node_name is applied;
@@ -1933,8 +2023,85 @@ colormachine.mix_colors = function( inv, i, sender )
 end
 
 
+-- helper function for colormachine.init
+-- analyzes all nodes and adds entires in colormachine.data for each combination
+--   of palette, paramtype2 (if colored) and texture (front view preferred); nodes
+--   which share these three values are listed as alternative nodes;
+--   colormachine.data is later used to create a menu page for each entry it has
+colormachine.init_hardware_colored = function()
+
+   -- identify those nodes that use the new paramtype2 color method
+   local nr_add = 1;
+   for k,def in pairs( minetest.registered_nodes ) do
+      -- if the node supports hardware coloring
+      if( def.palette
+       and (def.paramtype2=="color" or def.paramtype2=="colorwallmounted" or def.paramtype2=="colorfacedir")) then
+
+         local texture = "?";
+         -- take front view if possible
+         if(     def.tiles and def.tiles[5] and type(def.tiles[5])=="string") then
+            texture = def.tiles[5];
+         elseif( def.tiles and def.tiles[5] and def.tiles[5].name ) then
+            texture = def.tiles[5].name;
+         elseif( def.textures and def.textures[5] and type(def.textures[5])=="string" ) then
+            texture = def.textures[5];
+         elseif( def.tiles and def.tiles[1] and type(def.tiles[1])=="string") then
+            texture = def.tiles[1];
+         elseif( def.tiles and def.tiles[1] and def.tiles[1].name ) then
+            texture = def.tiles[1].name;
+         elseif( def.textures and def.textures[1] and type(def.textures[1])=="string" ) then
+            texture = def.textures[1];
+         else
+            texture = "default_meseblock.png";
+         end
+
+         -- each combination of texture, palette and paramtype is added only once as
+         -- there is no point in having each stair-, stairsplus-, xconnected- or
+         -- whatever shape show up individually
+         local found = false;
+         -- k,def are already used in the main loop
+         for k2,v2 in pairs( colormachine.data ) do
+            if(   v2.texture_name == texture
+              and v2.palette      == def.palette
+              and v2.paramtype2   == def.paramtype2 ) then
+               found = k2;
+            end
+         end
+
+         -- add the node to the menu if the combination is not yet known
+         if( not( found )) then
+            colormachine.data[ k.."_" ] = {
+		nr=tonumber("2."+nr_add),
+		modname='default', -- TODO: might not always be correct
+		shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,0}, u=0,
+		descr=k,  block=k, add="", p=1,
+		palette = def.palette,
+		paramtype2 = def.paramtype2,
+		texture_name= texture,
+                similar_blocks = { k }};
+            nr_add = nr_add + 1;
+            -- those two drawtypes can support more color than colorfacedir with its
+            -- limitation to 8 colors
+            if( def.paramtype2 == "color" or def.paramtype2 == "colorwallmounted" ) then
+               colormachine.data[ k.."_" ].shades = {1,1,1,1,1,1,1,1};
+               colormachine.data[ k.."_" ].grey_shades = {1,1,1,1,1};
+               colormachine.data[ k.."_" ].u = 1;
+            end
+         else
+            -- store blocks which share the same texture, palette and paramtype2
+            table.insert( colormachine.data[ found ].similar_blocks, k );
+         end
+      end
+   end
+end -- done with identifying hardware colored nodes
+
+
 -- this generates the formspec for all supported mods and the general colormachine.dye_management_formspec 
 colormachine.init = function()
+
+   -- analyze nodes that use hardware coloring and add them to the menu automaticly
+   colormachine.init_hardware_colored();
+
    local liste = {};
    -- create formspecs for all machines
    for k,v in pairs( colormachine.data ) do
