@@ -72,20 +72,38 @@
 colormachine = {};
 
 colormachine.colors = {
-        "red",
-        "orange",
-        "yellow",
-        "lime",
-        "green",
-        "spring", -- old name: "aqua",
-        "cyan",
-        "azure", -- old: "skyblue",
-        "blue",
-        "violet",
-        "magenta",
-        "rose" -- old: "redviolet"
+        "red",    -- ff 00 00
+        "orange", -- ff 80 00
+        "yellow", -- ff ff 00
+        "lime",   -- 80 ff 00
+        "green",  -- 00 ff 00
+        "spring", -- 00 ff 80 old name: "aqua",
+        "cyan",   -- 00 ff ff
+        "azure",  -- 00 80 ff old: "skyblue",
+        "blue",   -- 00 00 ff
+        "violet", -- 80 00 ff
+        "magenta",-- ff 00 ff
+        "rose"    -- ff 00 80  old: "redviolet"
 -- TODO: what about nodes with the old names? aqua -> spring, skyblue -> azure, and redviolet -> rose aliases
 }
+
+--[[
+-- information about how to compute the ColorString for ^[colorize
+colormachine.color_components = {
+        {"red",    2, 0, 0 }, -- ff 00 00
+        {"orange", 2, 1, 0 }, -- ff 80 00
+        {"yellow", 2, 2, 0 }, -- ff ff 00
+        {"lime",   1, 2, 0 }, -- 80 ff 00
+        {"green",  0, 2, 0 }, -- 00 ff 00
+        {"spring", 0, 2, 1 }, -- 00 ff 80 old name: "aqua",
+        {"cyan",   0, 2, 2 }, -- 00 ff ff
+        {"azure",  0, 1, 2 }, -- 00 80 ff old: "skyblue",
+        {"blue",   0, 0, 2 }, -- 00 00 ff
+        {"violet", 1, 0, 2 }, -- 80 00 ff
+        {"magenta",2, 0, 2 }, -- ff 00 ff
+        {"rose",   2, 0, 1 }, -- ff 00 80  old: "redviolet"
+}
+--]]
 
 
 -- set this to 0 if you're using that branch of stained_glass where the node names correspond to those of unified_dyes
@@ -144,6 +162,170 @@ end
 for i,v in ipairs( colormachine.grey_names ) do
   colormachine.colors_and_greys[ #colormachine.colors + i ] = v;
 end
+
+--[[
+colormachine.dye_palette[ name_of_palette ] = { -- i.e. "unifieddyes_palette_reds.png"
+  color, -- 1..12; -1 if grey is ~= -1
+  shade, -- 1..8;  -1 if grey is ~= -1
+  grey,  -- 1..5;  -1 if color or shade is ~= -1
+  name_of_dye,  -- i.e. "unifieddyes:dark_red_s50.png"
+  param2_value, -- 0..size of palette-1
+  colorstring,  -- i.e. "a85400" for dark orange
+}
+--]]
+
+colormachine.dye_palette = {};
+-- entries: c(olor), s(hade), g(reyscale), dye_name, param2_value, color_code
+colormachine.dye_palette[ "colorfacedir_palette.png" ] = {
+	{ -1, -1,  1, "dye:white",    0, "ffffff"}, -- 1
+	{  1,  3, -1, "dye:red",      1, "8b0000"}, -- 2
+	{  2,  3, -1, "dye:orange",   2, "ffa500"}, -- 3
+	{  3,  3, -1, "dye:yellow",   3, "eeee00"}, -- 4
+	{  5,  3, -1, "dye:green",    4, "006400"}, -- 5
+	{  9,  3, -1, "dye:blue",     5, "00008b"}, -- 6
+	{ -1, -1,  3, "dye:grey",     6, "808080"}, -- 7
+	{ 11,  3, -1, "dye:magenta",  7, "ff1493"}, -- 8
+	};
+
+-- 24 colors
+-- we have some left (standard: 15 dyes)
+-- dark green is darker than normal green; necessary because
+-- the colors ought to be the same as for the 8-color-palette
+colormachine.dye_palette[ "unifieddyes_palette_colorwallmounted.png"] = {
+	{ -1, -1,  1, "dye:white",      0, "ffffff"}, --  1 white
+	{ -1, -1,  2, "nonexistant",    1, "bfbfbf"}, --  2 light grey
+	{ -1, -1,  3, "dye:grey",       2, "808080"}, --  3 grey
+	{ -1, -1,  4, "dye:dark_grey",  3, "404040"}, --  4 dark grey
+	{ -1, -1,  5, "dye:black",      4, "141414"}, --  5 black
+
+	{  8,  1, -1, "nonexistant",    5, "8080ff"}, --  6 azure?
+	{  2,  4, -1, "dye:brown",      6, "aa5500"}, --  7 ocker brown
+	{ 12,  1, -1, "dye:pink",       7, "ffc1da"}, --  8 pink
+
+	{  1,  1, -1, "nonexistant",    8, "ff0000"}, --  9 bright red
+	{  2,  1, -1, "dye:orange",     9, "ff8000"}, -- 10 bright orange
+	{  3,  1, -1, "dye:yellow",    10, "ffff00"}, -- 11 bright yellow
+	{  5,  1, -1, "nonexistant",   11, "00ff00"}, -- 12 bright green
+	{  7,  1, -1, "nonexistant",   12, "00ffff"}, -- 13 bright cyan
+	{  9,  1, -1, "nonexistant",   13, "0000ff"}, -- 14 bright blue
+	{ 10,  1, -1, "nonexistant",   14, "8000ff"}, -- 15 bright violet
+	{ 11,  1, -1, "dye:magenta",   15, "ff00ff"}, -- 16 bright magenta
+
+	{  1,  3, -1, "dye:red",       16, "a80000"}, -- 17 dark red
+	{  2,  3, -1, "nonexistant",   17, "a85400"}, -- 18 dark orange
+	{  3,  3, -1, "nonexistant",   18, "a8a800"}, -- 19 dark yellow
+	{  5,  3, -1, "dye:dark_green",19, "00a800"}, -- 20 dark green
+	{  7,  3, -1, "dye:cyan",      20, "00a8a8"}, -- 21 dark cyan
+	{  9,  3, -1, "nonexistant",   21, "0000a8"}, -- 22 dark blue
+	{ 10,  3, -1, "dye:violet",    22, "5400a8"}, -- 23 dark violet
+	{ 11,  3, -1, "nonexistant",   23, "a800a8"}, -- 24 dark magenta
+
+	{  1,  5, -1, "nonexistant",   24, "550000"}, -- 25 very dark red
+	{  2,  5, -1, "nonexistant",   25, "552a00"}, -- 26 also: very dark orange
+	{  3,  5, -1, "nonexistant",   26, "555500"}, -- 27 very dark yellow
+	{  5,  5, -1, "dye:green",     27, "005500"}, -- 28 (very dark green)
+	{  7,  5, -1, "nonexistant",   28, "005500"}, -- 29 very dark cyan
+	{  9,  5, -1, "dye:blue",      29, "000055"}, -- 30 (very dark blue)
+	{ 10,  5, -1, "nonexistant",   30, "2a0055"}, -- 31 very dark violet
+	{ 11,  5, -1, "nonexistant",   31, "550055"}, -- 32 very dark mangeta
+	};
+
+--[[
+colormachine.dye_palette[ "unifieddyes_palette_reds.png"] = {
+	{  1,  1, -1, "nonexistant",    0, "ff0000"}, -- 1
+	{  1,  2, -1, "nonexistant",    1, "ff8000"}, -- 2
+	{  1,  3, -1, "nonexistant",    2, "ffff00"}, -- 3
+	{  1,  4, -1, "nonexistant",    3, "00ff00"}, -- 4
+	{  1,  5, -1, "nonexistant",    4, "00ffff"}, -- 5
+	{  1,  6, -1, "nonexistant",    5, "0000ff"}, -- 6
+	{  1,  7, -1, "nonexistant",    6, "8000ff"}, -- 7
+	{  1,  8, -1, "dye:magenta",    7, "ff00ff"}, -- 8
+	};
+--]]
+
+colormachine.add_unifieddyes_palette = function( color_name, c_nr )
+   local color_name_old = color_name;
+   if( color_name == "spring" ) then
+      color_name_old = "aqua";
+   elseif( color_name == "azure" ) then
+      color_name_old = "skyblue";
+   elseif( color_name == "rose") then
+      color_name_old = "redviolet";
+   end
+   colormachine.dye_palette[ "unifieddyes_palette_"..color_name_old.."s.png"] = {
+	{ c_nr, 1, -1, "dye:white",                                  0, "ffffff"}, -- 1
+	{ c_nr, 2, -1, "unifieddyes_"..color_name..".png",           1, "ff0000"}, -- 2
+	{ c_nr, 3, -1, "unifieddyes_"..color_name.."_s50.png",       2, "c04040"}, -- 3
+-- TODO: c_nr, 4 - unsure which color name that might represent
+	{ c_nr, 4, -1, "nonexistant",                                3, "ff8080"}, -- 4
+	{ c_nr, 5, -1, "unifieddyes_medium_"..color_name..".png",    4, "a80000"}, -- 5
+	{ c_nr, 6, -1, "unifieddyes_medium_"..color_name.."_s50.png",5, "802a2a"}, -- 6
+	{ c_nr, 7, -1, "unifieddyes_dark_"  ..color_name..".png",    6, "550000"}, -- 7
+	{ c_nr, 8, -1, "unifieddyes_dark_"  ..color_name.."_s50.png",7, "3f0e0e"}, -- 8
+-- TODO: adjust color mask for further colors
+	};
+   -- grey colors are handled diffrently
+   -- TODO: we have only 5 places to show them and are defining 8
+   if( color_name == "grey" ) then
+      for i,v in ipairs( colormachine.dye_palette[ "unifieddyes_palette_"..color_name_old.."s.png"] ) do
+        v[3] = v[2];
+        v[1] = -1;
+        v[2] = -1;
+      end
+   end
+end
+
+-- add the huge amount of color palettes for unifieddyes
+for c_nr,color_name in ipairs( colormachine.colors ) do
+   colormachine.add_unifieddyes_palette( color_name, c_nr );
+end
+colormachine.add_unifieddyes_palette( "grey", -1 );
+
+
+local dye_palette_nr = {};
+-- dye name       { colorfacedir_palette.png, unifieddyes_palette_colorwallmounted.png, #colorcode}
+dye_palette_nr[ "dye:white"     ] = { 0,  0, "ffffff", "ffffff"};
+dye_palette_nr[ "dye:red"       ] = { 1, 16, "8b0000", "a80000"}; -- (close enough?)
+dye_palette_nr[ "dye:orange"    ] = { 2,  9, "ffa500", "ff8000"}; -- (close enough?)
+dye_palette_nr[ "dye:yellow"    ] = { 3, 10, "eeee00", "ffff00"}; -- (bright yellow)
+dye_palette_nr[ "dye:green"     ] = { 4, 27, "006400", "005500"}; -- (very dark green)
+dye_palette_nr[ "dye:blue"      ] = { 5, 29, "00008b", "000055"}; -- (very dark blue)
+dye_palette_nr[ "dye:grey"      ] = { 6,  2, "808080", "808080"};
+dye_palette_nr[ "dye:magenta"   ] = { 7, 15, "ff1493", "ff00ff"};
+-- we have some dyes left (standard: 15 dyes)
+dye_palette_nr[ "dye:black"     ] = {-1,  4, nil,      "141414"};
+dye_palette_nr[ "dye:brown"     ] = {-1, 25, nil,      "552a00"}; -- also: very dark orange
+dye_palette_nr[ "dye:cyan"      ] = {-1, 20, nil,      "00a8a8"};
+-- dark green is darker than normal green; necessary because
+-- the colors ought to be the same as for the 8-color-palette
+dye_palette_nr[ "dye:dark_green"] = {-1, 19, nil,      "00a800"};
+dye_palette_nr[ "dye:dark_grey" ] = {-1,  3, nil,      "404040"};
+dye_palette_nr[ "dye:pink"      ] = {-1,  7, nil,      "ffc1da"};
+dye_palette_nr[ "dye:violet"    ] = {-1, 22, nil,      "5400a8"};
+
+dye_palette_nr[ "nonexistant"   ] = {-1,  1, nil,      "bfbfbf"}; -- light grey
+dye_palette_nr[ "nonexistant"   ] = {-1,  5, nil,      "8080ff"}; -- bright violett
+dye_palette_nr[ "nonexistant"   ] = {-1,  6, nil,      "aa5500"}; -- ocker brown
+dye_palette_nr[ "nonexistant"   ] = {-1,  8, nil,      "ff0000"}; -- bright red
+dye_palette_nr[ "nonexistant"   ] = {-1, 11, nil,      "00ff00"}; -- bright green
+dye_palette_nr[ "nonexistant"   ] = {-1, 12, nil,      "00ffff"}; -- bright cyan
+dye_palette_nr[ "nonexistant"   ] = {-1, 13, nil,      "0000ff"}; -- bright blue
+dye_palette_nr[ "nonexistant"   ] = {-1, 14, nil,      "8000ff"}; -- lila
+dye_palette_nr[ "nonexistant"   ] = {-1, 17, nil,      "a85400"}; -- dark orange
+dye_palette_nr[ "nonexistant"   ] = {-1, 18, nil,      "a8a800"}; -- dark yellow
+dye_palette_nr[ "nonexistant"   ] = {-1, 21, nil,      "0000a8"}; -- dark blue
+dye_palette_nr[ "nonexistant"   ] = {-1, 23, nil,      "a800a8"}; -- dark magenta
+dye_palette_nr[ "nonexistant"   ] = {-1, 24, nil,      "550000"}; -- very dark red
+dye_palette_nr[ "nonexistant"   ] = {-1, 26, nil,      "555500"}; -- very dark yellow
+dye_palette_nr[ "nonexistant"   ] = {-1, 28, nil,      "005500"}; -- very dark cyan
+dye_palette_nr[ "nonexistant"   ] = {-1, 30, nil,      "2a0055"}; -- very dark violet
+dye_palette_nr[ "nonexistant"   ] = {-1, 31, nil,      "550055"}; -- very dark mangeta
+
+-- dye numbers left uncovered in the colorwallmounted palette:
+--    1           5  6
+--   11 12 13 14 15    17 18
+--   21    23 24    26    28
+--30 31
 
 -- defines the order in which blocks are shown
 --   nr:          the diffrent block types need to be ordered by some system; the number defines that order
@@ -431,9 +613,9 @@ colormachine.ordered = {}
 -- the function that creates the color chooser based on the textures of the nodes offered (texture names have to start with m_prefix)
 colormachine.generate_form = function( m_prefix )
 
-   local form = "size["..tostring( #colormachine.colors+2 )..",10]".."label[5,0;Select a color:]"..
-         "label[5,9.7;Select a color or]"..
-         "button[7,9.5;2,1;abort;abort selection]"..
+   local form = "size["..tostring( #colormachine.colors+2 )..",11]".."label[5,0;Select a color:]"..
+         "label[5,10.4;Select a color or]"..
+         "button[7,10.2;2,1;abort;abort selection]"..
          "label[0.3,1;light]";
 
    -- not all mods offer all shades (and some offer even more)
@@ -455,17 +637,17 @@ colormachine.generate_form = function( m_prefix )
    -- combination of texture, palette and paramtype2 gets just one entry with alternate blocks
    -- beeing listed on the menu page
    if( colormachine.data[ m_prefix ].similar_blocks and #colormachine.data[ m_prefix ].similar_blocks > 1 ) then
-      form = form.."label[1,8.1;Similar blocks using the same texture and colors:]";
+      form = form.."label[1,8.8;Similar blocks using the same texture and colors:]";
       -- show each alternate block (usually diffrent shapes, i.e. stairs) as a button because that looks best
       -- (not that the button does much except go back)
       for i,block in ipairs( colormachine.data[ m_prefix ].similar_blocks ) do
          if( i<14) then
-              form = form.."item_image_button["..tostring(i)..",8.5;1,1;"..block..";"..minetest.formspec_escape(block)..";]";
+              form = form.."item_image_button["..tostring(i)..",9.2;1,1;"..block..";"..minetest.formspec_escape(block)..";]";
          end
       end
       -- this can happen if i.e. unifieddyes and moreblocks meet
       if( #colormachine.data[ m_prefix ].similar_blocks >13) then
-         form = form.."label[10.3,8.1;"..minetest.formspec_escape("..plus "..
+         form = form.."label[10.3,8.8;"..minetest.formspec_escape("..plus "..
 		tostring( #colormachine.data[ m_prefix ].similar_blocks-13 ).." more not shown here.").."]";
       end
    end
@@ -640,19 +822,6 @@ colormachine.print_color_image = function( meta, k, new_color, c, s, g, pos_x, p
 end
 
 
-
-colormachine.color_palette_colorfacedir_palette = {
-	"ffffff", -- 1 white
-	"8b0000", -- 2 red
-	"ffa500", -- 3 orange
-	"eeee00", -- 4 yellow
-	"006400", -- 5 green
-	"00008b", -- 6 blue
-	"808080", -- 7 grey
-	"ff1493", -- 8 magenta
-}
-
-
 -- returns the translated name of the color if necessary (wool/normal dye is named differently than unifieddyes);
 -- either meta or c, s and g together need to be given
 -- mode==0: return texture name
@@ -675,6 +844,31 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
    -- use hardwarecoloring
    if( colormachine.data[k].palette ) then
 
+      local palette = colormachine.dye_palette[ colormachine.data[k].palette ];
+      if( palette ) then
+         -- elements of palette: c(olor), s(hade), g(reyscale), dye_name, param2_value, color_code
+         -- search for the right entry in the dye_palette
+         local found = false;
+         for i,cp in ipairs( palette ) do
+            if( ( g==-1 and cp[1]==c and cp[2]==s) or (g~=-1 and cp[3]==g )) then
+               found = i;
+            end
+         end
+         if( not( found )) then
+            return nil;
+         end
+         -- there is just one block; coloring works through param2/itemstack data
+         if( as_obj_name==1 ) then
+            return colormachine.data[k].block;
+         end
+         -- formspec_escape is required here
+         return minetest.formspec_escape(
+		colormachine.data[k].texture_name.."^[colorize:#"..
+		palette[ found ][6]..":196");
+      end
+   end
+
+--[[
       if( colormachine.data[k].palette == "colorfacedir_palette.png" ) then
          -- no lime, spring, cyan, azure, violet or rose
          if( (c==4 or c==6 or c==7 or c==8 or c==10 or c==12 )
@@ -710,12 +904,23 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
          else
             return nil;
          end
+         local found = nil;
+         for dye_name,v2 in pairs(dye_palette_nr ) do
+            if( v2 and v2[1]==palette_idx-1 ) then
+               found = dye_name;
+            end
+         end
+         if( not( found )) then
+            return nil;
+         end
          -- formspec_escape is required here
          return minetest.formspec_escape(
 		colormachine.data[k].texture_name.."^[colorize:#"..
-		colormachine.color_palette_colorfacedir_palette[ palette_idx ]..":128");
+		dye_palette_nr[ found ][3]..":128");
+
       end
    end
+--]]
 
    local k_orig = k;
    -- unifieddyes_ does not supply all colors
@@ -1478,34 +1683,6 @@ colormachine.main_menu_formspec = function( pos, option )
    return form;
 end
 
-
-local dye_palette_nr = {};
--- dye name       { colorfacedir_palette.png, unifieddyes_palette_colorwallmounted.png}
-dye_palette_nr[ "dye:white"     ] = { 0,  0};
-dye_palette_nr[ "dye:red"       ] = { 1,  8};
-dye_palette_nr[ "dye:orange"    ] = { 2,  9};
-dye_palette_nr[ "dye:yellow"    ] = { 3, 10};
-dye_palette_nr[ "dye:green"     ] = { 4, 27};
-dye_palette_nr[ "dye:blue"      ] = { 5, 29};
-dye_palette_nr[ "dye:grey"      ] = { 6,  2};
-dye_palette_nr[ "dye:magenta"   ] = { 7, 16};
--- we have some dyes left (standard: 15 dyes)
-dye_palette_nr[ "dye:black"     ] = {-1,  4};
-dye_palette_nr[ "dye:brown"     ] = {-1, 25};
-dye_palette_nr[ "dye:cyan"      ] = {-1, 20};
--- dark green is darker than normal green; necessary because
--- the colors ought to be the same as for the 8-color-palette
-dye_palette_nr[ "dye:dark_green"] = {-1, 19};
-dye_palette_nr[ "dye:dark_grey" ] = {-1,  3};
-dye_palette_nr[ "dye:pink"      ] = {-1,  7};
-dye_palette_nr[ "dye:violet"    ] = {-1, 22};
-
--- dye numbers left uncovered in the colorwallmounted palette:
---    1           5  6
---   11 12 13 14 15    17 18
---   21    23 24    26    28
---30 31
-
 -- determines the name of the dye that was used to create the current param2 value;
 -- transforms param2 to the value as suitable if dye dye_node_name is applied;
 -- old_node_name is just passed on
@@ -2073,20 +2250,13 @@ colormachine.init_hardware_colored = function()
             colormachine.data[ k.."_" ] = {
 		nr=tonumber("2."+nr_add),
 		modname='default', -- TODO: might not always be correct
-		shades={0,0,1,0,0,0,0,0}, grey_shades={1,0,1,0,0}, u=0,
+		shades={1,1,1,1,1,1,1,1}, grey_shades={1,1,1,1,1}, u=1,
 		descr=k,  block=k, add="", p=1,
 		palette = def.palette,
 		paramtype2 = def.paramtype2,
 		texture_name= texture,
                 similar_blocks = { k }};
             nr_add = nr_add + 1;
-            -- those two drawtypes can support more color than colorfacedir with its
-            -- limitation to 8 colors
-            if( def.paramtype2 == "color" or def.paramtype2 == "colorwallmounted" ) then
-               colormachine.data[ k.."_" ].shades = {1,1,1,1,1,1,1,1};
-               colormachine.data[ k.."_" ].grey_shades = {1,1,1,1,1};
-               colormachine.data[ k.."_" ].u = 1;
-            end
          else
             -- store blocks which share the same texture, palette and paramtype2
             table.insert( colormachine.data[ found ].similar_blocks, k );
