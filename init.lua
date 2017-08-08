@@ -20,9 +20,10 @@
 
 
 
--- Version 0.6
+-- Version 0.9
 
 -- Changelog: 
+-- 07.08.17 Adjusted to new hardware coloring (paramtype2 based)
 -- 16.02.17 Removed support for lrfurn (that mod uses the new coloring mechanism as well)
 -- 08.02.17 Removed support for homedecor, blox, plasticbox, stainedglass, coloredwood and unifiedbricks
 --          as those now use a new feature of newer versions of MT that makes the colormachine
@@ -86,24 +87,6 @@ colormachine.colors = {
         "rose"    -- ff 00 80  old: "redviolet"
 -- TODO: what about nodes with the old names? aqua -> spring, skyblue -> azure, and redviolet -> rose aliases
 }
-
---[[
--- information about how to compute the ColorString for ^[colorize
-colormachine.color_components = {
-        {"red",    2, 0, 0 }, -- ff 00 00
-        {"orange", 2, 1, 0 }, -- ff 80 00
-        {"yellow", 2, 2, 0 }, -- ff ff 00
-        {"lime",   1, 2, 0 }, -- 80 ff 00
-        {"green",  0, 2, 0 }, -- 00 ff 00
-        {"spring", 0, 2, 1 }, -- 00 ff 80 old name: "aqua",
-        {"cyan",   0, 2, 2 }, -- 00 ff ff
-        {"azure",  0, 1, 2 }, -- 00 80 ff old: "skyblue",
-        {"blue",   0, 0, 2 }, -- 00 00 ff
-        {"violet", 1, 0, 2 }, -- 80 00 ff
-        {"magenta",2, 0, 2 }, -- ff 00 ff
-        {"rose",   2, 0, 1 }, -- ff 00 80  old: "redviolet"
-}
---]]
 
 
 -- set this to 0 if you're using that branch of stained_glass where the node names correspond to those of unified_dyes
@@ -230,18 +213,6 @@ colormachine.dye_palette[ "unifieddyes_palette_colorwallmounted.png"] = {
 	{ 11,  5, -1, "nonexistant",   31, "550055"}, -- 32 very dark mangeta
 	};
 
---[[
-colormachine.dye_palette[ "unifieddyes_palette_reds.png"] = {
-	{  1,  1, -1, "nonexistant",    0, "ff0000"}, -- 1
-	{  1,  2, -1, "nonexistant",    1, "ff8000"}, -- 2
-	{  1,  3, -1, "nonexistant",    2, "ffff00"}, -- 3
-	{  1,  4, -1, "nonexistant",    3, "00ff00"}, -- 4
-	{  1,  5, -1, "nonexistant",    4, "00ffff"}, -- 5
-	{  1,  6, -1, "nonexistant",    5, "0000ff"}, -- 6
-	{  1,  7, -1, "nonexistant",    6, "8000ff"}, -- 7
-	{  1,  8, -1, "dye:magenta",    7, "ff00ff"}, -- 8
-	};
---]]
 
 colormachine.add_unifieddyes_palette = function( color_name, c_nr )
    local color_name_old = color_name;
@@ -280,52 +251,6 @@ for c_nr,color_name in ipairs( colormachine.colors ) do
    colormachine.add_unifieddyes_palette( color_name, c_nr );
 end
 colormachine.add_unifieddyes_palette( "grey", -1 );
-
-
-local dye_palette_nr = {};
--- dye name       { colorfacedir_palette.png, unifieddyes_palette_colorwallmounted.png, #colorcode}
-dye_palette_nr[ "dye:white"     ] = { 0,  0, "ffffff", "ffffff"};
-dye_palette_nr[ "dye:red"       ] = { 1, 16, "8b0000", "a80000"}; -- (close enough?)
-dye_palette_nr[ "dye:orange"    ] = { 2,  9, "ffa500", "ff8000"}; -- (close enough?)
-dye_palette_nr[ "dye:yellow"    ] = { 3, 10, "eeee00", "ffff00"}; -- (bright yellow)
-dye_palette_nr[ "dye:green"     ] = { 4, 27, "006400", "005500"}; -- (very dark green)
-dye_palette_nr[ "dye:blue"      ] = { 5, 29, "00008b", "000055"}; -- (very dark blue)
-dye_palette_nr[ "dye:grey"      ] = { 6,  2, "808080", "808080"};
-dye_palette_nr[ "dye:magenta"   ] = { 7, 15, "ff1493", "ff00ff"};
--- we have some dyes left (standard: 15 dyes)
-dye_palette_nr[ "dye:black"     ] = {-1,  4, nil,      "141414"};
-dye_palette_nr[ "dye:brown"     ] = {-1, 25, nil,      "552a00"}; -- also: very dark orange
-dye_palette_nr[ "dye:cyan"      ] = {-1, 20, nil,      "00a8a8"};
--- dark green is darker than normal green; necessary because
--- the colors ought to be the same as for the 8-color-palette
-dye_palette_nr[ "dye:dark_green"] = {-1, 19, nil,      "00a800"};
-dye_palette_nr[ "dye:dark_grey" ] = {-1,  3, nil,      "404040"};
-dye_palette_nr[ "dye:pink"      ] = {-1,  7, nil,      "ffc1da"};
-dye_palette_nr[ "dye:violet"    ] = {-1, 22, nil,      "5400a8"};
-
-dye_palette_nr[ "nonexistant"   ] = {-1,  1, nil,      "bfbfbf"}; -- light grey
-dye_palette_nr[ "nonexistant"   ] = {-1,  5, nil,      "8080ff"}; -- bright violett
-dye_palette_nr[ "nonexistant"   ] = {-1,  6, nil,      "aa5500"}; -- ocker brown
-dye_palette_nr[ "nonexistant"   ] = {-1,  8, nil,      "ff0000"}; -- bright red
-dye_palette_nr[ "nonexistant"   ] = {-1, 11, nil,      "00ff00"}; -- bright green
-dye_palette_nr[ "nonexistant"   ] = {-1, 12, nil,      "00ffff"}; -- bright cyan
-dye_palette_nr[ "nonexistant"   ] = {-1, 13, nil,      "0000ff"}; -- bright blue
-dye_palette_nr[ "nonexistant"   ] = {-1, 14, nil,      "8000ff"}; -- lila
-dye_palette_nr[ "nonexistant"   ] = {-1, 17, nil,      "a85400"}; -- dark orange
-dye_palette_nr[ "nonexistant"   ] = {-1, 18, nil,      "a8a800"}; -- dark yellow
-dye_palette_nr[ "nonexistant"   ] = {-1, 21, nil,      "0000a8"}; -- dark blue
-dye_palette_nr[ "nonexistant"   ] = {-1, 23, nil,      "a800a8"}; -- dark magenta
-dye_palette_nr[ "nonexistant"   ] = {-1, 24, nil,      "550000"}; -- very dark red
-dye_palette_nr[ "nonexistant"   ] = {-1, 26, nil,      "555500"}; -- very dark yellow
-dye_palette_nr[ "nonexistant"   ] = {-1, 28, nil,      "005500"}; -- very dark cyan
-dye_palette_nr[ "nonexistant"   ] = {-1, 30, nil,      "2a0055"}; -- very dark violet
-dye_palette_nr[ "nonexistant"   ] = {-1, 31, nil,      "550055"}; -- very dark mangeta
-
--- dye numbers left uncovered in the colorwallmounted palette:
---    1           5  6
---   11 12 13 14 15    17 18
---   21    23 24    26    28
---30 31
 
 -- defines the order in which blocks are shown
 --   nr:          the diffrent block types need to be ordered by some system; the number defines that order
@@ -832,6 +757,10 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       c = tonumber(meta:get_string('selected_color'));
       s = tonumber(meta:get_string('selected_shade'));   
       g = tonumber(meta:get_string('selected_grey_shade')); 
+      -- wrong metadata?
+      if( not(c) or c=="" or not(s) or s=="" or not(g) or g=="") then
+         return nil;
+      end
    end
 
 
@@ -868,59 +797,6 @@ colormachine.translate_color_name = function( meta, k, new_color, c, s, g, as_ob
       end
    end
 
---[[
-      if( colormachine.data[k].palette == "colorfacedir_palette.png" ) then
-         -- no lime, spring, cyan, azure, violet or rose
-         if( (c==4 or c==6 or c==7 or c==8 or c==10 or c==12 )
-           -- no lightgrey, darkgrey or black (only white and grey)
-           or (g==2 or g==4 or g==5 )
-           -- no other saturation than normal
-           or (g==-1 and s~=3 )) then
-            return nil;
-         end
-
-         -- there is just one block; coloring works through param2/itemstack data
-         if( as_obj_name==1 ) then
-            return colormachine.data[k].block;
-         end
-
-         local palette_idx = nil;
-         if( g==1 ) then
-            palette_idx = 1; -- white
-         elseif( c==1 ) then
-            palette_idx = 2; -- red
-         elseif( c==2 ) then
-            palette_idx = 3; -- orange
-         elseif( c==3 ) then
-            palette_idx = 4; -- yellow
-         elseif( c==5 ) then
-            palette_idx = 5; -- green
-         elseif( c==9 ) then
-            palette_idx = 6; -- blue
-         elseif( g==3 ) then
-            palette_idx = 7; -- grey
-         elseif( c==11) then
-            palette_idx = 8; -- magenta
-         else
-            return nil;
-         end
-         local found = nil;
-         for dye_name,v2 in pairs(dye_palette_nr ) do
-            if( v2 and v2[1]==palette_idx-1 ) then
-               found = dye_name;
-            end
-         end
-         if( not( found )) then
-            return nil;
-         end
-         -- formspec_escape is required here
-         return minetest.formspec_escape(
-		colormachine.data[k].texture_name.."^[colorize:#"..
-		dye_palette_nr[ found ][3]..":128");
-
-      end
-   end
---]]
 
    local k_orig = k;
    -- unifieddyes_ does not supply all colors
@@ -1180,8 +1056,61 @@ end
 
 -- if a block is inserted, the name of its color is very intresting (for removing color or for setting that color)
 -- (kind of the inverse of translate_color_name)
-colormachine.get_color_from_blockname = function( mod_name, block_name )
+-- palette_index is used for hardware coloring: stack:get_meta():get_string("palette_index"); it is nil otherwise
+colormachine.get_color_from_blockname = function( mod_name, block_name, palette_index )
 
+   -- we are dealing with the new hardware coloring
+   if( palette_index ~= nil and palette_index ~= "") then
+      local data = colormachine.data[ block_name.."_" ];
+      if(  not( data )
+        or not( data.palette )
+        or not( data.paramtype2 )) then
+         return { error_code ="Sorry, this hardware colored block is not supported by the spray booth.",
+                  found_name = "",
+                  blocktype  = ""};
+      end
+      -- determine the name of the color (found_name)
+      local palette = colormachine.dye_palette[ data.palette ];
+      local found_name = nil;
+      -- palette_index seems to carry the multiplier in it
+      local p2 = tonumber(palette_index);
+      if( data.paramtype2=="colorfacedir" ) then
+         p2 = (p2/32) - (p2%32);
+      elseif( data.paramtype2 == "colorwallmounted" ) then
+         p2 = (p2/ 8) - (p2% 8);
+      end
+      -- determine the (unifieddyes) name of the color the block has
+      for i,c in ipairs( palette ) do
+         if( c[5] == p2 ) then
+            if( c[3]==-1 ) then
+                -- compose the name
+               found_name = colormachine.colors[c[1] ];
+               local prefix = colormachine.prefixes[ (c[2]/2) - c[2]%2 ];
+               local postfix = "";
+               if( c[2]%2==1 ) then
+                  postfix = "_s50";
+               end
+               if( found_name and prefix and postfix ) then
+                  found_name = prefix..found_name..postfix;
+               end
+            else
+               found_name = colormachine.grey_names[c[3]];
+            end
+         end
+      end
+      if( not( found_name )) then
+         return { error_code = "Error: No suitable palette found with index "..tostring(palette_index).." for this block.",
+                  found_name = "",
+                  blocktype  = ""};
+      end
+      return { error_code = nil,
+               found_name = found_name,
+               blocktype  = block_name.."_"};
+   end
+
+   if( not( mod_name )) then
+      mod_name = "does not exist";
+   end
    local bname = mod_name..":"..block_name;
    local found = {};
    for k,v in pairs( colormachine.data ) do
@@ -1506,6 +1435,16 @@ colormachine.blocktype_menu = function( meta, new_color, page )
    return form;
 end
 
+colormachine.owner_has_creative_priv = function( meta )
+   if( not( meta )) then
+      return false;
+   end
+   local owner = meta:get_string("owner");
+   if( not(owner) or owner=="" or not(minetest.check_player_privs( owner, {creative=true}))) then
+      return false;
+   end
+   return true;
+end
 
 
 -- this function tries to figure out which block type was inserted and how the color can be decoded
@@ -1528,12 +1467,13 @@ colormachine.main_menu_formspec = function( pos, option )
 		"label[9.3,-0.5;Additional storage for dyes:]"..
 		"list[current_name;extrastore;9.3,0;5,9]";
 
-   if( minetest.setting_getbool("creative_mode") ) then
+   local meta = minetest:get_meta(pos);
+   local inv  = meta:get_inventory();
+
+   if( colormachine.owner_has_creative_priv( meta )) then
       form = form.."label[0.5,0.25;CREATIVE MODE:]".."label[0.5,0.75;no dyes or input consumed]";
    end
 
-   local meta = minetest.env:get_meta(pos);
-   local inv  = meta:get_inventory();
 
    -- display the name of the color the machine is set to
    form = form.."label[1.0,4.3;Current painting color:]"..
@@ -1553,6 +1493,14 @@ colormachine.main_menu_formspec = function( pos, option )
    for k,v in pairs( colormachine.data ) do
       if( bname == v.block and colormachine.data[ k ].installed==1) then
          table.insert( found, k );
+
+      -- the block might be listed under "similar blocks"
+      elseif( colormachine.data[ k ].similar_blocks) then
+         for j,block in ipairs( colormachine.data[ k ].similar_blocks) do
+            if( block and block == bname ) then
+               table.insert( found, k );
+            end
+         end
       end
    end 
 
@@ -1563,8 +1511,15 @@ colormachine.main_menu_formspec = function( pos, option )
 
    local anz_blocks = stack:get_count();
 
-   -- a block that can be colored
-   if( #found > 0 ) then
+   -- are we dealing with one of the new blocks using hardware coloring?
+   local stackmeta = stack:get_meta();
+   local palette_index = nil;
+   if( meta ) then
+      palette_index = stackmeta:get_string("palette_index");
+   end
+
+   -- a block (unpainted) that can be colored
+   if( #found > 0 and (not( palette_index) or palette_index=="" or tonumber(palette_index)==0)) then
 
       local out_offset = 3.5-math.floor( #found / 2 );
       if( out_offset < 0 ) then
@@ -1593,11 +1548,12 @@ colormachine.main_menu_formspec = function( pos, option )
                -- how many of these blocks can we actually paint?
 
                local can_be_painted = 0;
-               if( not( minetest.setting_getbool("creative_mode") )) then
+               if( not( colormachine.owner_has_creative_priv( meta ))) then
                   can_be_painted = colormachine.calc_dyes_needed( meta, inv, math.ceil( anz_blocks / factor ), 0 );
                else
                   can_be_painted = 99; -- an entire stack can be painted in creative mode
                end
+               local ostack = inv:get_stack( "output", i );
                inv:set_stack( "output", i, block_name.." "..tostring( math.min( can_be_painted * factor, anz_blocks )));
 
                p_values[ i ] = factor;
@@ -1648,7 +1604,7 @@ colormachine.main_menu_formspec = function( pos, option )
 
 
    -- it is possible that we are dealing with an already painted block - in that case we have to dertermie the color
-   local found_color_data = colormachine.get_color_from_blockname( parts[1], parts[2] );
+   local found_color_data = colormachine.get_color_from_blockname( nil, stack:get_name(), palette_index );
    if( found_color_data.error_code ~= nil ) then
       form = form.."label[2.2,3.0;"..found_color_data.error_code..".]";
       return form;
@@ -1686,18 +1642,23 @@ end
 -- determines the name of the dye that was used to create the current param2 value;
 -- transforms param2 to the value as suitable if dye dye_node_name is applied;
 -- old_node_name is just passed on
-colormachine.identify_color_by_param2_and_palette = function( dye_node_name, param2, faktor, palette_index, old_node_name )
+colormachine.identify_color_by_param2_and_palette = function( dye_node_name, param2, faktor, old_node_name, palette_name )
+	if( not( colormachine.dye_palette[ palette_name ] )) then
+		return;
+	end
+	local palette = colormachine.dye_palette[ palette_name ];
 	local old_dye_name = nil;
 	local color = math.floor(( param2 - (param2%faktor))/faktor);
 	local new_param2 = param2;
-	for k,v in pairs( dye_palette_nr ) do
+	-- data structure of entries in palette: c(olor), s(hade), g(reyscale), dye_name, param2_value, color_code
+	for i,c in ipairs( palette ) do
 		-- find out the name of the old dye that had been used
-		if( v[ palette_index ] == color ) then
-			old_dye_name = k;
+		if( c[5] == color ) then     -- param2_value
+			old_dye_name = c[4]; -- dye_name
 		end
 		-- adjust param2 to the new color
-		if( dye_node_name == k and v[ palette_index ]>-1) then
-			new_param2 = (new_param2%faktor) + (v[ palette_index ]*faktor);
+		if( dye_node_name == c[4] and c[5]>-1) then
+			new_param2 = (new_param2%faktor) + (c[5]*faktor);
 		end
 	end
 	-- the color can be translated to the color-palette from the dye mod
@@ -1731,11 +1692,11 @@ colormachine.get_node_name_painted = function( old_node_name, dye_node_name, par
 
 		-- use normal dyes for nodes using colorfacedir_palette
 		if( def.palette and def.palette == "colorfacedir_palette.png" and def.paramtype2=="colorfacedir") then
-			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2,32, 1, old_node_name );
+			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2, 32, old_node_name, def.palette );
 		end
 
 		if( def.palette and def.palette == "unifieddyes_palette_colorwallmounted.png" and anz_color==32) then
-			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2, 8, 2, old_node_name );
+			return colormachine.identify_color_by_param2_and_palette( dye_node_name, param2, 8, old_node_name, def.palette );
 		end
 
 --[[
@@ -1840,7 +1801,7 @@ end
 
 colormachine.check_owner = function( pos, player )
    -- only the owner can put something in
-   local meta = minetest.env:get_meta(pos);
+   local meta = minetest:get_meta(pos);
 
    if( meta:get_string('owner') ~= player:get_player_name() ) then
       minetest.chat_send_player( player:get_player_name(),
@@ -1902,7 +1863,7 @@ end
 
 colormachine.on_metadata_inventory_put = function( pos, listname, index, stack, player )
   
-   local meta = minetest.env:get_meta(pos);
+   local meta = minetest:get_meta(pos);
    local inv  = meta:get_inventory();
 
    -- nothing to do if onnly a dye was inserted
@@ -1960,14 +1921,14 @@ end
 
 colormachine.on_metadata_inventory_take = function( pos, listname, index, stack, player )
   
-   local meta = minetest.env:get_meta(pos);
+   local meta = minetest:get_meta(pos);
    local inv  = meta:get_inventory();
 
 
    if( listname == "output" ) then
 
       -- in creative mode, no pigments are consumed
-      if( minetest.setting_getbool("creative_mode") ) then
+      if( colormachine.owner_has_creative_priv( meta )) then
          -- update the main menu
          meta:set_string( 'formspec', colormachine.main_menu_formspec( pos, "analyze" ));
          return;
@@ -2255,6 +2216,7 @@ colormachine.init_hardware_colored = function()
 		palette = def.palette,
 		paramtype2 = def.paramtype2,
 		texture_name= texture,
+		installed = 1,
                 similar_blocks = { k }};
             nr_add = nr_add + 1;
          else
@@ -2452,7 +2414,7 @@ minetest.register_node("colormachine:colormachine", {
 
         on_construct = function(pos)
 
-           local meta = minetest.env:get_meta(pos);
+           local meta = minetest:get_meta(pos);
 
            meta:set_string('selected_shade',       3 ); -- grey-shade
            meta:set_string('selected_grey_shade',  1 );
@@ -2474,7 +2436,7 @@ minetest.register_node("colormachine:colormachine", {
         end,
 
         after_place_node = function(pos, placer)
-           local meta = minetest.env:get_meta(pos);
+           local meta = minetest:get_meta(pos);
 
            meta:set_string( "owner", ( placer:get_player_name() or "" ));
            meta:set_string( "infotext", "Spray booth (owned by "..( meta:get_string( "owner" ) or "" )..")");
@@ -2491,7 +2453,7 @@ minetest.register_node("colormachine:colormachine", {
               fields.page = 0;
            end
 
-           local meta = minetest.env:get_meta(pos);
+           local meta = minetest:get_meta(pos);
            for k,v in pairs( fields ) do
               if( k == 'main_menu' ) then
                  meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
@@ -2595,7 +2557,7 @@ minetest.register_node("colormachine:colormachine", {
 
         can_dig = function(pos,player)
 
-           local meta = minetest.env:get_meta(pos);
+           local meta = minetest:get_meta(pos);
            local inv = meta:get_inventory()
 
            if( not( colormachine.check_owner( pos, player ))) then
