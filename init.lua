@@ -1467,13 +1467,16 @@ colormachine.main_menu_formspec = function( pos, option )
 		"label[9.3,-0.5;Additional storage for dyes:]"..
 		"list[current_name;extrastore;9.3,0;5,9]";
 
-   local meta = minetest:get_meta(pos);
+   local meta = minetest.get_meta(pos);
    local inv  = meta:get_inventory();
 
    if( colormachine.owner_has_creative_priv( meta )) then
       form = form.."label[0.5,0.25;CREATIVE MODE:]".."label[0.5,0.75;no dyes or input consumed]";
    end
 
+   local s = tonumber(meta:get_string('selected_shade' ));
+   local g = tonumber(meta:get_string('selected_grey_shade' ));
+   local c = tonumber(meta:get_string('selected_color' ));
 
    -- display the name of the color the machine is set to
    form = form.."label[1.0,4.3;Current painting color:]"..
@@ -1553,8 +1556,28 @@ colormachine.main_menu_formspec = function( pos, option )
                else
                   can_be_painted = 99; -- an entire stack can be painted in creative mode
                end
-               local ostack = inv:get_stack( "output", i );
-               inv:set_stack( "output", i, block_name.." "..tostring( math.min( can_be_painted * factor, anz_blocks )));
+
+               local ostack = ItemStack( block_name.." "..tostring( math.min( can_be_painted * factor, anz_blocks )));
+               -- are we dealing with a block that uses hardware coloring and item metadata?
+               if( colormachine.data[v].palette
+                 and colormachine.dye_palette[ colormachine.data[v].palette ]) then
+
+                  local ometa = ostack:get_meta();
+                  for p_nr, c_data in ipairs( colormachine.dye_palette[ colormachine.data[v].palette ] ) do
+                     if( c_data[1]==c and c_data[2]==s and c_data[3]==g ) then
+                        -- calculate the right palette index
+                        local p2 = c_data[5];
+                        if(     colormachine.data[v].paramtype2=="colorfacedir" ) then
+                           p2 = p2 * 32;
+                        elseif( colormachine.data[v].paramtype2 == "colorwallmounted" ) then
+                           p2 = p2 *  8;
+                        end
+                        -- set the right meta value
+                        ometa:set_string( "palette_index", p2 );
+                     end
+                  end
+               end
+               inv:set_stack( "output", i, ostack);
 
                p_values[ i ] = factor;
 
@@ -1801,7 +1824,7 @@ end
 
 colormachine.check_owner = function( pos, player )
    -- only the owner can put something in
-   local meta = minetest:get_meta(pos);
+   local meta = minetest.get_meta(pos);
 
    if( meta:get_string('owner') ~= player:get_player_name() ) then
       minetest.chat_send_player( player:get_player_name(),
@@ -1863,7 +1886,7 @@ end
 
 colormachine.on_metadata_inventory_put = function( pos, listname, index, stack, player )
   
-   local meta = minetest:get_meta(pos);
+   local meta = minetest.get_meta(pos);
    local inv  = meta:get_inventory();
 
    -- nothing to do if onnly a dye was inserted
@@ -1921,7 +1944,7 @@ end
 
 colormachine.on_metadata_inventory_take = function( pos, listname, index, stack, player )
   
-   local meta = minetest:get_meta(pos);
+   local meta = minetest.get_meta(pos);
    local inv  = meta:get_inventory();
 
 
@@ -2414,7 +2437,7 @@ minetest.register_node("colormachine:colormachine", {
 
         on_construct = function(pos)
 
-           local meta = minetest:get_meta(pos);
+           local meta = minetest.get_meta(pos);
 
            meta:set_string('selected_shade',       3 ); -- grey-shade
            meta:set_string('selected_grey_shade',  1 );
@@ -2430,16 +2453,16 @@ minetest.register_node("colormachine:colormachine", {
            inv:set_size("paintless", 1);  -- output slot for blocks with paint scratched off
            inv:set_size("dyes",     18);  -- internal storage for the dye powders
            inv:set_size("extrastore",5*9); -- additional storage for dyes
-
-           --meta:set_string( 'formspec', colormachine.blocktype_menu( meta, 'white' ));
-           meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
         end,
 
         after_place_node = function(pos, placer)
-           local meta = minetest:get_meta(pos);
+           local meta = minetest.get_meta(pos);
 
            meta:set_string( "owner", ( placer:get_player_name() or "" ));
            meta:set_string( "infotext", "Spray booth (owned by "..( meta:get_string( "owner" ) or "" )..")");
+
+           --meta:set_string( 'formspec', colormachine.blocktype_menu( meta, 'white' ));
+           meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
         end,
 
         on_receive_fields = function(pos, formname, fields, sender)
@@ -2453,7 +2476,7 @@ minetest.register_node("colormachine:colormachine", {
               fields.page = 0;
            end
 
-           local meta = minetest:get_meta(pos);
+           local meta = minetest.get_meta(pos);
            for k,v in pairs( fields ) do
               if( k == 'main_menu' ) then
                  meta:set_string( 'formspec', colormachine.main_menu_formspec(pos, "analyze") );
@@ -2557,7 +2580,7 @@ minetest.register_node("colormachine:colormachine", {
 
         can_dig = function(pos,player)
 
-           local meta = minetest:get_meta(pos);
+           local meta = minetest.get_meta(pos);
            local inv = meta:get_inventory()
 
            if( not( colormachine.check_owner( pos, player ))) then
