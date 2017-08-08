@@ -1075,26 +1075,26 @@ colormachine.get_color_from_blockname = function( mod_name, block_name, palette_
       -- palette_index seems to carry the multiplier in it
       local p2 = tonumber(palette_index);
       if( data.paramtype2=="colorfacedir" ) then
-         p2 = (p2/32) - (p2%32);
+         p2 = (p2 - (p2%32))/32;
       elseif( data.paramtype2 == "colorwallmounted" ) then
-         p2 = (p2/ 8) - (p2% 8);
+         p2 = (p2 - (p2% 8))/ 8;
       end
       -- determine the (unifieddyes) name of the color the block has
-      for i,c in ipairs( palette ) do
-         if( c[5] == p2 ) then
-            if( c[3]==-1 ) then
+      for i,c_data in ipairs( palette ) do
+         if( c_data[5] == p2 ) then
+            if( c_data[3]==-1 ) then
                 -- compose the name
-               found_name = colormachine.colors[c[1] ];
-               local prefix = colormachine.prefixes[ (c[2]/2) - c[2]%2 ];
+               found_name = colormachine.colors[c_data[1] ];
+               local prefix = colormachine.prefixes[ math.floor( (c_data[2] - 1 )/2)+1 ];
                local postfix = "";
-               if( c[2]%2==1 ) then
+               if( c_data[2]%2==0 ) then
                   postfix = "_s50";
                end
                if( found_name and prefix and postfix ) then
                   found_name = prefix..found_name..postfix;
                end
             else
-               found_name = colormachine.grey_names[c[3]];
+               found_name = colormachine.grey_names[c_data[3]];
             end
          end
       end
